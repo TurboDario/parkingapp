@@ -8,15 +8,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.parkar.R
 import com.example.parkar.data.ParkingPreferences
-import com.example.parkar.service.LocationForegroundService
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 
 class WidgetActionReceiver : BroadcastReceiver() {
 
@@ -29,19 +30,55 @@ class WidgetActionReceiver : BroadcastReceiver() {
 
         when (intent.action) {
             ACTION_SAVE_LOCATION -> {
-                // Actualiza el botón a estado "processing"
+                // Set button to "processing" state
                 updateSaveButtonState(context, appWidgetManager, appWidgetIds, ButtonState.PROCESSING)
 
-                // Verifica si tenemos permisos de localización
+                // Verificar si tenemos permisos
                 if (hasLocationPermission(context)) {
-                    // Inicia el Foreground Service que se encargará de obtener y guardar la ubicación
-                    val serviceIntent = Intent(context, LocationForegroundService::class.java)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        context.startForegroundService(serviceIntent)
-                    } else {
-                        context.startService(serviceIntent)
-                    }
-                    // Nota: El servicio se encargará de actualizar la UI (por ejemplo, cambiando a SUCCESS o ERROR)
+                    // Obtener ubicación actual
+                    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+                    fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                        .addOnSuccessListener { location ->
+                            if (location != null) {
+                                // Guardar la ubicación
+                                parkingPreferences.saveParkingLocation(
+                                    latitude = location.latitude,
+                                    longitude = location.longitude
+                                )
+                                Toast.makeText(
+                                    context,
+                                    "Ubicación guardada correctamente",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                updateSaveButtonState(context, appWidgetManager, appWidgetIds, ButtonState.SUCCESS)
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    updateSaveButtonState(context, appWidgetManager, appWidgetIds, ButtonState.NORMAL)
+                                }, 2000)
+                            } else {
+                                Log.e("WidgetActionReceiver", "La ubicación es null")
+                                Toast.makeText(
+                                    context,
+                                    "No se pudo obtener la ubicación actual (location null)",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                updateSaveButtonState(context, appWidgetManager, appWidgetIds, ButtonState.ERROR)
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    updateSaveButtonState(context, appWidgetManager, appWidgetIds, ButtonState.NORMAL)
+                                }, 2000)
+                            }
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("WidgetActionReceiver", "Error al obtener la ubicación", e)
+                            Toast.makeText(
+                                context,
+                                "Error al guardar ubicación: ${e.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            updateSaveButtonState(context, appWidgetManager, appWidgetIds, ButtonState.ERROR)
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                updateSaveButtonState(context, appWidgetManager, appWidgetIds, ButtonState.NORMAL)
+                            }, 2000)
+                        }
                 } else {
                     Toast.makeText(
                         context,
@@ -49,16 +86,19 @@ class WidgetActionReceiver : BroadcastReceiver() {
                         Toast.LENGTH_LONG
                     ).show()
 
-                    // Actualiza el botón a estado "error"
+                    // Set button to "error" state
                     updateSaveButtonState(context, appWidgetManager, appWidgetIds, ButtonState.ERROR)
-                    // Vuelve al estado normal después de 2 segundos
+
+                    // Reset button state after 2 seconds
                     Handler(Looper.getMainLooper()).postDelayed({
                         updateSaveButtonState(context, appWidgetManager, appWidgetIds, ButtonState.NORMAL)
                     }, 2000)
 
-                    // Abre la aplicación principal para solicitar permisos
+                    // Abrir la aplicación principal para solicitar permisos
                     val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
-                    launchIntent?.let { context.startActivity(it) }
+                    if (launchIntent != null) {
+                        context.startActivity(launchIntent)
+                    }
                 }
             }
             ACTION_NAVIGATE -> {
@@ -67,7 +107,7 @@ class WidgetActionReceiver : BroadcastReceiver() {
                 if (parkingLocation != null) {
                     val (latitude, longitude) = parkingLocation
 
-                    // Intenta abrir con Google Maps primero
+                    // Intentar abrir con Google Maps primero
                     val gmmIntentUri = Uri.parse("google.navigation:q=$latitude,$longitude")
                     val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
                     mapIntent.setPackage("com.google.android.apps.maps")
@@ -77,10 +117,8 @@ class WidgetActionReceiver : BroadcastReceiver() {
                         context.startActivity(mapIntent)
                     } else {
                         // Fallback a cualquier app de mapas
-                        val genericMapIntent = Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude")
-                        )
+                        val genericMapIntent = Intent(Intent.ACTION_VIEW,
+                            Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude"))
                         genericMapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         context.startActivity(genericMapIntent)
                     }
@@ -95,23 +133,29 @@ class WidgetActionReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun updateSaveButtonState(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray,
-        state: ButtonState
-    ) {
+    private fun updateSaveButtonState(context: Context, appWidgetManager: AppWidgetManager,
+                                      appWidgetIds: IntArray, state: ButtonState) {
         val views = RemoteViews(context.packageName, R.layout.parkar_widget)
 
         when (state) {
-            ButtonState.NORMAL -> views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_normal)
-            ButtonState.PROCESSING -> views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_processing)
-            ButtonState.SUCCESS -> views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_success)
-            ButtonState.ERROR -> views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_error)
+            ButtonState.NORMAL -> {
+                views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_normal)
+            }
+            ButtonState.PROCESSING -> {
+                views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_processing)
+            }
+            ButtonState.SUCCESS -> {
+                views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_success)
+            }
+            ButtonState.ERROR -> {
+                views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_error)
+            }
         }
 
-        // Actualiza todas las instancias del widget
-        appWidgetIds.forEach { appWidgetManager.updateAppWidget(it, views) }
+        // Update all instances of the widget
+        for (appWidgetId in appWidgetIds) {
+            appWidgetManager.updateAppWidget(appWidgetId, views)
+        }
     }
 
     private fun hasLocationPermission(context: Context): Boolean {
