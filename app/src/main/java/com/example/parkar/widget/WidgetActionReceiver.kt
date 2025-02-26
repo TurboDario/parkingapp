@@ -1,58 +1,47 @@
 package com.example.parkar.widget
 
 import android.annotation.SuppressLint
+import android.appwidget.AppWidgetManager
 import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.example.parkar.R
 import com.example.parkar.data.ParkingPreferences
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
+import com.example.parkar.service.LocationForegroundService
 
 class WidgetActionReceiver : BroadcastReceiver() {
 
     @SuppressLint("MissingPermission")
     override fun onReceive(context: Context, intent: Intent) {
         val parkingPreferences = ParkingPreferences(context)
+        val appWidgetManager = AppWidgetManager.getInstance(context)
+        val thisAppWidget = ComponentName(context.packageName, ParKarWidgetProvider::class.java.name)
+        val appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget)
 
         when (intent.action) {
             ACTION_SAVE_LOCATION -> {
-                // Verificar si tenemos permisos
+                // Actualiza el botón a estado "processing"
+                updateSaveButtonState(context, appWidgetManager, appWidgetIds, ButtonState.PROCESSING)
+
+                // Verifica si tenemos permisos de localización
                 if (hasLocationPermission(context)) {
-                    // Obtener ubicación actual
-                    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-                    fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                        .addOnSuccessListener { location ->
-                            if (location != null) {
-                                // Guardar la ubicación
-                                parkingPreferences.saveParkingLocation(
-                                    latitude = location.latitude,
-                                    longitude = location.longitude
-                                )
-                                Toast.makeText(
-                                    context,
-                                    "Ubicación guardada correctamente",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "No se pudo obtener la ubicación actual",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(
-                                context,
-                                "Error al guardar ubicación",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                    // Inicia el Foreground Service que se encargará de obtener y guardar la ubicación
+                    val serviceIntent = Intent(context, LocationForegroundService::class.java)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        context.startForegroundService(serviceIntent)
+                    } else {
+                        context.startService(serviceIntent)
+                    }
+                    // Nota: El servicio se encargará de actualizar la UI (por ejemplo, cambiando a SUCCESS o ERROR)
                 } else {
                     Toast.makeText(
                         context,
@@ -60,11 +49,16 @@ class WidgetActionReceiver : BroadcastReceiver() {
                         Toast.LENGTH_LONG
                     ).show()
 
-                    // Abrir la aplicación principal para solicitar permisos
+                    // Actualiza el botón a estado "error"
+                    updateSaveButtonState(context, appWidgetManager, appWidgetIds, ButtonState.ERROR)
+                    // Vuelve al estado normal después de 2 segundos
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        updateSaveButtonState(context, appWidgetManager, appWidgetIds, ButtonState.NORMAL)
+                    }, 2000)
+
+                    // Abre la aplicación principal para solicitar permisos
                     val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
-                    if (launchIntent != null) {
-                        context.startActivity(launchIntent)
-                    }
+                    launchIntent?.let { context.startActivity(it) }
                 }
             }
             ACTION_NAVIGATE -> {
@@ -73,7 +67,7 @@ class WidgetActionReceiver : BroadcastReceiver() {
                 if (parkingLocation != null) {
                     val (latitude, longitude) = parkingLocation
 
-                    // Intentar abrir con Google Maps primero
+                    // Intenta abrir con Google Maps primero
                     val gmmIntentUri = Uri.parse("google.navigation:q=$latitude,$longitude")
                     val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
                     mapIntent.setPackage("com.google.android.apps.maps")
@@ -83,8 +77,10 @@ class WidgetActionReceiver : BroadcastReceiver() {
                         context.startActivity(mapIntent)
                     } else {
                         // Fallback a cualquier app de mapas
-                        val genericMapIntent = Intent(Intent.ACTION_VIEW,
-                            Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude"))
+                        val genericMapIntent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude")
+                        )
                         genericMapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         context.startActivity(genericMapIntent)
                     }
@@ -99,6 +95,25 @@ class WidgetActionReceiver : BroadcastReceiver() {
         }
     }
 
+    private fun updateSaveButtonState(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray,
+        state: ButtonState
+    ) {
+        val views = RemoteViews(context.packageName, R.layout.parkar_widget)
+
+        when (state) {
+            ButtonState.NORMAL -> views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_normal)
+            ButtonState.PROCESSING -> views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_processing)
+            ButtonState.SUCCESS -> views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_success)
+            ButtonState.ERROR -> views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_error)
+        }
+
+        // Actualiza todas las instancias del widget
+        appWidgetIds.forEach { appWidgetManager.updateAppWidget(it, views) }
+    }
+
     private fun hasLocationPermission(context: Context): Boolean {
         return ContextCompat.checkSelfPermission(
             context,
@@ -108,6 +123,10 @@ class WidgetActionReceiver : BroadcastReceiver() {
                     context,
                     android.Manifest.permission.ACCESS_COARSE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    enum class ButtonState {
+        NORMAL, PROCESSING, SUCCESS, ERROR
     }
 
     companion object {
