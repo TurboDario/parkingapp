@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:background="@drawable/widget_background">
+
+    <ImageButton
+        android:id="@+id/widget_btn_save"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/ic_car"
+        android:background="@drawable/blue_button_background"
+        android:contentDescription="Guardar ubicación del coche" />
+
+    <ImageButton
+        android:id="@+id/widget_btn_navigate"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginStart="4dp"
+        android:src="@drawable/ic_navigate"
+        android:background="@drawable/green_button_background"
+        android:contentDescription="Navegar al coche" />
+
+</LinearLayout>
