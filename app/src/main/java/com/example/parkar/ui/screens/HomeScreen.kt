@@ -49,7 +49,6 @@ fun HomeScreen(
     onManualLocationClick: () -> Unit = {},
     onOption1Click: () -> Unit = {},
     onOption2Click: () -> Unit = {},
-    // **NUEVOS PARÁMETROS PARA GESTIONAR EL TEMA**
     themeState: MutableState<Boolean>,
     onThemeChange: (Boolean) -> Unit
 ) {
@@ -64,7 +63,8 @@ fun HomeScreen(
                 onOption2Click = onOption2Click,
                 // **PASAMOS EL ESTADO Y LA FUNCIÓN DE CAMBIO DE TEMA AL APP DRAWER CONTENT**
                 themeState = themeState,
-                onThemeChange = onThemeChange
+                onThemeChange = onThemeChange,
+                onManualLocationClick = onManualLocationClick
             )
         }
     ) {
