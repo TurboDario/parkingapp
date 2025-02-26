@@ -1,4 +1,4 @@
-package com.example.parkar
+package com.turbodev.parkar
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme

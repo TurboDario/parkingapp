@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.parkar"
+    namespace = "com.turbodev.parkar"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.parkar"
+        applicationId = "com.turbodev.parkar"
         minSdk = 28
         targetSdk = 35
         versionCode = 1
@@ -77,5 +77,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     debugImplementation(libs.androidx.ui.tooling)
+
+    // Maps
+    implementation(libs.play.services.maps)
+    implementation(libs.maps.compose)
 
 }

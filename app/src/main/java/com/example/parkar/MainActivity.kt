@@ -1,4 +1,4 @@
-package com.example.parkar
+package com.turbodev.parkar
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -16,9 +16,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
-import com.example.parkar.location.LocationManager
-import com.example.parkar.ui.screens.HomeScreen
-import com.example.parkar.ui.screens.ManualLocationScreen
+import com.turbodev.parkar.location.LocationManager
+import com.turbodev.parkar.ui.screens.HomeScreen
+import com.turbodev.parkar.ui.screens.ManualLocationScreen
 
 class MainActivity : ComponentActivity() {
 

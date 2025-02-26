@@ -1,11 +1,11 @@
-package com.example.parkar.location
+package com.turbodev.parkar.location
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import com.example.parkar.data.ParkingPreferences
+import com.turbodev.parkar.data.ParkingPreferences
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority

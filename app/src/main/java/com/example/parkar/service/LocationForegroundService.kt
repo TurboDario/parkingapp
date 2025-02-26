@@ -1,4 +1,4 @@
-package com.example.parkar.service
+package com.turbodev.parkar.service
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -13,9 +13,9 @@ import android.os.IBinder
 import android.os.Looper
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
-import com.example.parkar.R
-import com.example.parkar.data.ParkingPreferences
-import com.example.parkar.widget.ParKarWidgetProvider
+import com.turbodev.parkar.R
+import com.turbodev.parkar.data.ParkingPreferences
+import com.turbodev.parkar.widget.ParKarWidgetProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
