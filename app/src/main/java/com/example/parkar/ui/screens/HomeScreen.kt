@@ -18,7 +18,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconButtonDefaults // <-- Importante importar IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -27,7 +27,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState // <-- Importante importar MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color // <-- Importante importar Color
 import com.example.parkar.R
 import com.example.parkar.ui.components.AppDrawerContent
 import kotlinx.coroutines.launch
@@ -48,9 +47,7 @@ fun HomeScreen(
     onNavigateToCar: () -> Unit,
     onManualLocationClick: () -> Unit = {},
     onOption1Click: () -> Unit = {},
-    onOption2Click: () -> Unit = {},
-    themeState: MutableState<Boolean>,
-    onThemeChange: (Boolean) -> Unit
+    onOption2Click: () -> Unit = {}
 ) {
     val drawerState = rememberDrawerState(initialValue = androidx.compose.material3.DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -60,11 +57,7 @@ fun HomeScreen(
         drawerContent = {
             AppDrawerContent(
                 onOption1Click = onOption1Click,
-                onOption2Click = onOption2Click,
-                // **PASAMOS EL ESTADO Y LA FUNCIÓN DE CAMBIO DE TEMA AL APP DRAWER CONTENT**
-                themeState = themeState,
-                onThemeChange = onThemeChange,
-                onManualLocationClick = onManualLocationClick
+                onOption2Click = onOption2Click
             )
         }
     ) {
@@ -110,7 +103,7 @@ fun HomeScreen(
                     ) {
                         // Botón 1: Guardar aparcamiento (ParKar)
                         Button(
-                            onClick = onSaveParkingLocation,
+                            onClick = onSaveParkingLocation, // <-- ACCIÓN PRINCIPAL: Guardar ParKar
                             modifier = Modifier
                                 .fillMaxSize()
                                 .shadow(elevation = 8.dp, shape = MaterialTheme.shapes.large),
@@ -146,25 +139,25 @@ fun HomeScreen(
 
                         // IconButton:  Icono de Editar en la ESQUINA INFERIOR DERECHA - ACCIÓN SECUNDARIA
                         IconButton(
-                            onClick = onManualLocationClick,
+                            onClick = onManualLocationClick, // <-- ACCIÓN SECUNDARIA: Editar ParKar Manual
                             modifier = Modifier
-                                .size(48.dp)
-                                .padding(8.dp)
-                                .align(Alignment.BottomEnd),
-                            colors = IconButtonDefaults.iconButtonColors(
-                                containerColor = Color.White
+                                .size(48.dp) // Tamaño del IconButton, un poco más pequeño que el botón Editar anterior
+                                .padding(8.dp) // Añadimos padding para separación visual del borde
+                                .align(Alignment.BottomEnd), // Alineado en la esquina inferior derecha del Box
+                            colors = IconButtonDefaults.iconButtonColors( // <-- Añadimos la propiedad colors
+                                containerColor = Color.White // <-- Fondo BLANCO para el IconButton
                             )
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_edit_location),
+                                painter = painterResource(id = R.drawable.ic_edit_location), // Icono de editar (lápiz)
                                 contentDescription = "Editar ParKar",
-                                modifier = Modifier.size(24.dp),
-                                tint = MaterialTheme.colorScheme.primary
+                                modifier = Modifier.size(24.dp), // Tamaño del icono dentro del IconButton
+                                tint = MaterialTheme.colorScheme.primary // <-- Icono con el color PRIMARIO del tema
                             )
                         }
                     }
 
-                    // Botón 3: Navegar al coche (cuadrado grande)
+                    // Botón 3: Navegar al coche (cuadrado grande) - SE MANTIENE SIN CAMBIOS
                     Spacer(modifier = Modifier.height(24.dp))
                     Button(
                         onClick = onNavigateToCar,
