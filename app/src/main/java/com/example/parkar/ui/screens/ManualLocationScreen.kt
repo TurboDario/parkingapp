@@ -1,4 +1,4 @@
-package com.example.parkar.ui.screens
+package com.turbodev.parkar.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

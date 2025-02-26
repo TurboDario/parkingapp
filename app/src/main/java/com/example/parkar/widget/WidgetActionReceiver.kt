@@ -1,4 +1,4 @@
-package com.example.parkar.widget
+package com.turbodev.parkar.widget
 
 import android.annotation.SuppressLint
 import android.appwidget.AppWidgetManager
@@ -14,9 +14,9 @@ import android.os.Looper
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import com.example.parkar.R
-import com.example.parkar.data.ParkingPreferences
-import com.example.parkar.service.LocationForegroundService
+import com.turbodev.parkar.R
+import com.turbodev.parkar.data.ParkingPreferences
+import com.turbodev.parkar.service.LocationForegroundService
 
 class WidgetActionReceiver : BroadcastReceiver() {
 
@@ -130,7 +130,7 @@ class WidgetActionReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        const val ACTION_SAVE_LOCATION = "com.example.parkar.widget.ACTION_SAVE_LOCATION"
-        const val ACTION_NAVIGATE = "com.example.parkar.widget.ACTION_NAVIGATE"
+        const val ACTION_SAVE_LOCATION = "com.turbodev.parkar.widget.ACTION_SAVE_LOCATION"
+        const val ACTION_NAVIGATE = "com.turbodev.parkar.widget.ACTION_NAVIGATE"
     }
 }

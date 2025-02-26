@@ -1,4 +1,4 @@
-package com.example.parkar.ui.screens
+package com.turbodev.parkar.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,8 +37,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
-import com.example.parkar.R
-import com.example.parkar.ui.components.AppDrawerContent
+import com.turbodev.parkar.R
+import com.turbodev.parkar.ui.components.AppDrawerContent
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

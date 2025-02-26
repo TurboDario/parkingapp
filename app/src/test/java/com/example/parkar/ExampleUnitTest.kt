@@ -1,4 +1,4 @@
-package com.example.parkar
+package com.turbodev.parkar
 
 import org.junit.Test
 

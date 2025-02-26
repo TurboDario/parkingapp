@@ -1,4 +1,4 @@
-package com.example.parkar.ui.components
+package com.turbodev.parkar.ui.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer

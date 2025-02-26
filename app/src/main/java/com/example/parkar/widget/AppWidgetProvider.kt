@@ -1,4 +1,4 @@
-package com.example.parkar.widget
+package com.turbodev.parkar.widget
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
@@ -7,7 +7,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import com.example.parkar.R
+import com.turbodev.parkar.R
 
 class ParKarWidgetProvider : AppWidgetProvider() {
 

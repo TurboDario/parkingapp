@@ -1,4 +1,4 @@
-package com.example.parkar.data
+package com.turbodev.parkar.data
 
 import android.content.Context
 import android.content.SharedPreferences
