@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.example.parkar.location.LocationManager
 import com.example.parkar.ui.screens.HomeScreen
+import com.example.parkar.ui.screens.ManualLocationScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -45,12 +46,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge() // <- Añade esta línea para habilitar edge-to-edge
 
         setContent {
-            // **EVALUAR isSystemInDarkTheme FUERA DE remember**
-            val systemDarkTheme = isSystemInDarkTheme() // <-- EVALUAR AQUÍ
+            // **EVALUATE isSystemInDarkTheme OUTSIDE remember**
+            val systemDarkTheme = isSystemInDarkTheme() // <-- EVALUATE HERE
             // **ESTADO PARA GESTIONAR EL TEMA (CLARO/OSCURO)**
-            val themeState = remember { mutableStateOf(systemDarkTheme) } // <-- PASAR EL RESULTADO A mutableStateOf
+            val themeState = remember { mutableStateOf(systemDarkTheme) } // <-- PASS THE RESULT TO mutableStateOf
 
-            ParKarTheme(darkTheme = themeState.value) { // Pasa el estado al ParKarTheme
+            ParKarTheme(darkTheme = themeState.value) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -58,7 +59,26 @@ class MainActivity : ComponentActivity() {
                     HomeScreen(
                         onSaveParkingLocation = { locationManager.saveParkingLocation() },
                         onNavigateToCar = { locationManager.navigateToParkingLocation() },
-                        // **PASAMOS EL ESTADO Y LA FUNCIÓN PARA CAMBIAR EL TEMA AL HOMESCREEN**
+                        // **IMPLEMENTACIÓN DE onManualLocationClick - ¡IMPORTANTE!**
+                        onManualLocationClick = {
+                            // **CUANDO SE HAGA CLIC EN "EDITAR", NAVEGAMOS A ManualLocationScreen**
+                            setContent { // **¡¡¡USAMOS setContent DE NUEVO!!!  (Esto es una forma SIMPLE de navegar entre "pantallas" en Compose en este ejemplo básico)**
+                                ManualLocationScreen(
+                                    onSaveManualLocation = {
+                                        locationManager.saveParkingLocation() // **PASAMOS onSaveParkingLocation A ManualLocationScreen**
+                                        // **DESPUÉS DE "GUARDAR" EN ManualLocationScreen, VOLVEMOS A HomeScreen (de nuevo, simple para este ejemplo)**
+                                        setContent { // **VOLVEMOS A setContent PARA REGRESAR A HomeScreen**
+                                            HomeScreen(
+                                                onSaveParkingLocation = { locationManager.saveParkingLocation() },
+                                                onNavigateToCar = { locationManager.navigateToParkingLocation() },
+                                                themeState = themeState,
+                                                onThemeChange = { isDark -> themeState.value = isDark }
+                                            )
+                                        }
+                                    }
+                                )
+                            }
+                        },
                         themeState = themeState,
                         onThemeChange = { isDark -> themeState.value = isDark }
                     )
