@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.material3)
 
     // Compose dependencies
     implementation(platform(libs.androidx.compose.bom))
@@ -69,10 +70,12 @@ dependencies {
     // Location services
     implementation(libs.play.services.location)
     implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.navigation.runtime.android)
 
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     debugImplementation(libs.androidx.ui.tooling)
+
 }
