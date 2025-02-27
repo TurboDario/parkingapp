@@ -3,112 +3,135 @@ package com.turbodev.parkar
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
+import com.google.android.gms.maps.model.LatLng
 import com.turbodev.parkar.location.LocationManager
 import com.turbodev.parkar.ui.screens.HomeScreen
-import com.turbodev.parkar.ui.screens.ManualLocationScreen
 
 class MainActivity : ComponentActivity() {
-
     private lateinit var locationManager: LocationManager
+    private var currentLocation by mutableStateOf<LatLng?>(null)
+    private var currentScreen by mutableStateOf(Screen.HOME)
 
-    // Registro para solicitar permisos de ubicación
+    enum class Screen {
+        HOME, MANUAL_LOCATION
+    }
+
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        val locationGranted = permissions.entries.all { it.value }
-        if (locationGranted) {
+        if (permissions.all { it.value }) {
             locationManager.initLocationClient()
+            updateCurrentLocation()
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Inicializar el administrador de ubicación
+        // Verificación de API Key
+        try {
+            val appInfo = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+            val apiKey = appInfo.metaData.getString("com.google.android.geo.API_KEY")
+            Log.d("MAPS_API_KEY", "Runtime API Key: $apiKey")
+        } catch (e: Exception) {
+            Log.e("MAPS_API_KEY", "Error getting API key", e)
+        }
+
         locationManager = LocationManager(this)
-
-        // Verificar permisos de ubicación
         checkLocationPermissions()
-
-        enableEdgeToEdge() // <- Añade esta línea para habilitar edge-to-edge
+        enableEdgeToEdge()
 
         setContent {
-            // **EVALUATE isSystemInDarkTheme OUTSIDE remember**
-            val systemDarkTheme = isSystemInDarkTheme() // <-- EVALUATE HERE
-            // **ESTADO PARA GESTIONAR EL TEMA (CLARO/OSCURO)**
-            val themeState = remember { mutableStateOf(systemDarkTheme) } // <-- PASS THE RESULT TO mutableStateOf
+            val systemDarkTheme = isSystemInDarkTheme()
+            val themeState = remember { mutableStateOf(systemDarkTheme) }
 
             ParKarTheme(darkTheme = themeState.value) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeScreen(
-                        onSaveParkingLocation = { locationManager.saveParkingLocation() },
-                        onNavigateToCar = { locationManager.navigateToParkingLocation() },
-                        // **IMPLEMENTACIÓN DE onManualLocationClick - ¡IMPORTANTE!**
-                        onManualLocationClick = {
-                            // **CUANDO SE HAGA CLIC EN "EDITAR", NAVEGAMOS A ManualLocationScreen**
-                            setContent { // **¡¡¡USAMOS setContent DE NUEVO!!!  (Esto es una forma SIMPLE de navegar entre "pantallas" en Compose en este ejemplo básico)**
-                                ManualLocationScreen(
-                                    onSaveManualLocation = {
-                                        locationManager.saveParkingLocation() // **PASAMOS onSaveParkingLocation A ManualLocationScreen**
-                                        // **DESPUÉS DE "GUARDAR" EN ManualLocationScreen, VOLVEMOS A HomeScreen (de nuevo, simple para este ejemplo)**
-                                        setContent { // **VOLVEMOS A setContent PARA REGRESAR A HomeScreen**
-                                            HomeScreen(
-                                                onSaveParkingLocation = { locationManager.saveParkingLocation() },
-                                                onNavigateToCar = { locationManager.navigateToParkingLocation() },
-                                                themeState = themeState,
-                                                onThemeChange = { isDark -> themeState.value = isDark }
-                                            )
-                                        }
-                                    }
-                                )
-                            }
-                        },
+                    NavigationHandler(
+                        currentScreen = currentScreen,
+                        locationManager = locationManager,
                         themeState = themeState,
-                        onThemeChange = { isDark -> themeState.value = isDark }
+                        onSaveLocation = { latLng ->
+                            currentLocation = latLng
+                            locationManager.saveParkingLocation(latLng)
+                            currentScreen = Screen.HOME
+                        },
+                        onScreenChange = { screen -> currentScreen = screen }
                     )
                 }
             }
         }
     }
 
-    private fun checkLocationPermissions() {
-        val fineLocationPermission = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-
-        val coarseLocationPermission = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-
-        if (fineLocationPermission != PackageManager.PERMISSION_GRANTED ||
-            coarseLocationPermission != PackageManager.PERMISSION_GRANTED) {
-
-            requestPermissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun NavigationHandler(
+        currentScreen: Screen,
+        locationManager: LocationManager,
+        themeState: MutableState<Boolean>,
+        onSaveLocation: (LatLng) -> Unit,
+        onScreenChange: (Screen) -> Unit
+    ) {
+        when (currentScreen) {
+            Screen.HOME -> HomeScreen(
+                onSaveParkingLocation = {
+                    locationManager.saveParkingLocation()
+                },
+                onNavigateToCar = {
+                    locationManager.navigateToParkingLocation()
+                },
+                onManualLocationClick = { onScreenChange(Screen.MANUAL_LOCATION) },
+                themeState = themeState,
+                onThemeChange = { isDark -> themeState.value = isDark }
             )
+            Screen.MANUAL_LOCATION -> ManualLocationScreen(
+                initialLocation = currentLocation,
+                onSaveManualLocation = { latLng -> onSaveLocation(latLng) },
+                onCancel = { onScreenChange(Screen.HOME) }
+            )
+        }
+    }
+
+    private fun checkLocationPermissions() {
+        val hasFineLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        val hasCoarseLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+
+        if (hasFineLocation != PackageManager.PERMISSION_GRANTED ||
+            hasCoarseLocation != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ))
         } else {
             locationManager.initLocationClient()
+            updateCurrentLocation()
+        }
+    }
+
+    private fun updateCurrentLocation() {
+        locationManager.getCurrentLocation()?.let {
+            currentLocation = it
         }
     }
 }
