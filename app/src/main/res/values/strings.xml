@@ -16,5 +16,8 @@
     <string name="save_parking_location">Guardar ubicación de estacionamiento</string>
     <string name="edit_parking">Editar ubicación</string>
     <string name="navigate_to_car">Llevarme al coche</string>
-
+    <string name="select_manual_location">Seleccionar ubicación manual</string>
+    <string name="central_location">Ubicación central</string>
+    <string name="save_selected_location">Guardar ubicación seleccionada</string>
+    <string name="cancel">Cancelar</string>
 </resources>

@@ -46,15 +46,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Verificación de API Key
-        try {
-            val appInfo = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
-            val apiKey = appInfo.metaData.getString("com.google.android.geo.API_KEY")
-            Log.d("MAPS_API_KEY", "Runtime API Key: $apiKey")
-        } catch (e: Exception) {
-            Log.e("MAPS_API_KEY", "Error getting API key", e)
-        }
-
         locationManager = LocationManager(this)
         checkLocationPermissions()
         enableEdgeToEdge()
@@ -72,12 +63,8 @@ class MainActivity : ComponentActivity() {
                         currentScreen = currentScreen,
                         locationManager = locationManager,
                         themeState = themeState,
-                        onSaveLocation = { latLng ->
-                            currentLocation = latLng
-                            locationManager.saveParkingLocation(latLng)
-                            currentScreen = Screen.HOME
-                        },
-                        onScreenChange = { screen -> currentScreen = screen }
+                        onSaveLocation = { saveLocation(it) },
+                        onScreenChange = { currentScreen = it }
                     )
                 }
             }
@@ -95,19 +82,15 @@ class MainActivity : ComponentActivity() {
     ) {
         when (currentScreen) {
             Screen.HOME -> HomeScreen(
-                onSaveParkingLocation = {
-                    locationManager.saveParkingLocation()
-                },
-                onNavigateToCar = {
-                    locationManager.navigateToParkingLocation()
-                },
+                onSaveParkingLocation = { locationManager.saveParkingLocation() },
+                onNavigateToCar = { locationManager.navigateToParkingLocation() },
                 onManualLocationClick = { onScreenChange(Screen.MANUAL_LOCATION) },
                 themeState = themeState,
-                onThemeChange = { isDark -> themeState.value = isDark }
+                onThemeChange = { themeState.value = it }
             )
             Screen.MANUAL_LOCATION -> ManualLocationScreen(
                 initialLocation = currentLocation,
-                onSaveManualLocation = { latLng -> onSaveLocation(latLng) },
+                onSaveManualLocation = { onSaveLocation(it) },
                 onCancel = { onScreenChange(Screen.HOME) }
             )
         }
@@ -130,8 +113,12 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun updateCurrentLocation() {
-        locationManager.getCurrentLocation()?.let {
-            currentLocation = it
-        }
+        currentLocation = locationManager.getCurrentLocation()
+    }
+
+    private fun saveLocation(latLng: LatLng) {
+        currentLocation = latLng
+        locationManager.saveParkingLocation(latLng)
+        currentScreen = Screen.HOME
     }
 }
