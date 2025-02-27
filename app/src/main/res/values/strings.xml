@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">ParKar</string>
     <string name="widget_description">Guarda y encuentra tu coche rápidamente</string>
+    <string name="parking_location_saved">Ubicación de estacionamiento guardada</string>
+    <string name="unable_to_get_location">No se pudo obtener la ubicación</string>
+    <string name="error_getting_location">Error al obtener la ubicación</string>
+    <string name="error_unexpected">Error inesperado: %1$s</string>
+    <string name="no_saved_location">No hay ubicación guardada</string>
 </resources>
