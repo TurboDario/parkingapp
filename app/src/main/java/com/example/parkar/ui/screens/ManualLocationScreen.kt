@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -35,8 +37,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @androidx.compose.material3.ExperimentalMaterial3Api
@@ -54,7 +54,7 @@ fun ManualLocationScreen(
     val uiSettings = remember { MapUiSettings(zoomControlsEnabled = true, myLocationButtonEnabled = true) }
     val properties = remember { MapProperties(isMyLocationEnabled = true) }
 
-    // Cargar ubicación inicial
+    // Cargar ubicación inicial y centrar la cámara
     LaunchedEffect(Unit) {
         if (selectedLocation == null) {
             fetchLastKnownLocation(context) { location ->
@@ -63,6 +63,17 @@ fun ManualLocationScreen(
                     cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 17f)
                 }
             }
+        } else {
+            selectedLocation?.let {
+                cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 17f)
+            }
+        }
+    }
+
+    // Actualizar selectedLocation cuando la cámara se mueva y quede inactiva
+    LaunchedEffect(cameraPositionState.isMoving) {
+        if (!cameraPositionState.isMoving) {
+            selectedLocation = cameraPositionState.position.target
         }
     }
 
@@ -97,20 +108,17 @@ fun ManualLocationScreen(
                     cameraPositionState = cameraPositionState,
                     properties = properties,
                     uiSettings = uiSettings,
-                    onMapClick = { clickedLocation ->
-                        selectedLocation = clickedLocation
-                    },
-                    onMapLongClick = { longClickedLocation ->
-                        selectedLocation = longClickedLocation
-                    }
-                ) {
-                    selectedLocation?.let { location ->
-                        Marker(
-                            state = MarkerState(position = location),
-                            title = "Ubicación seleccionada"
-                        )
-                    }
-                }
+                    // Eliminamos onMapClick y onMapLongClick
+                )
+                // Icono central fijo
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_location_pin), // Asegúrate de tener este icono en res/drawable
+                    contentDescription = "Ubicación central",
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(bottom = 48.dp), // Ajusta según sea necesario para que no lo tape el botón inferior
+                    tint = MaterialTheme.colorScheme.primary // O el color que desees
+                )
             }
 
             Spacer(modifier = Modifier.padding(8.dp))
