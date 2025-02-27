@@ -16,7 +16,6 @@ class ParKarWidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        // Actualiza cada instancia del widget
         appWidgetIds.forEach { appWidgetId ->
             updateAppWidget(context, appWidgetManager, appWidgetId)
         }
@@ -29,35 +28,31 @@ class ParKarWidgetProvider : AppWidgetProvider() {
             appWidgetManager: AppWidgetManager,
             appWidgetId: Int
         ) {
-            // Construye la vista del widget usando RemoteViews
             val views = RemoteViews(context.packageName, R.layout.parkar_widget)
 
-            // Configura el PendingIntent para el botón de guardar ubicación
-            val saveIntent = Intent(context, WidgetActionReceiver::class.java).apply {
-                action = WidgetActionReceiver.ACTION_SAVE_LOCATION
-            }
-            val savePendingIntent = PendingIntent.getBroadcast(
-                context,
-                0,
-                saveIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            views.setOnClickPendingIntent(
+                R.id.widget_btn_save,
+                createPendingIntent(context, WidgetActionReceiver.ACTION_SAVE_LOCATION, 0)
             )
-            views.setOnClickPendingIntent(R.id.widget_btn_save, savePendingIntent)
 
-            // Configura el PendingIntent para el botón de navegar al coche
-            val navigateIntent = Intent(context, WidgetActionReceiver::class.java).apply {
-                action = WidgetActionReceiver.ACTION_NAVIGATE
-            }
-            val navigatePendingIntent = PendingIntent.getBroadcast(
-                context,
-                1,
-                navigateIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            views.setOnClickPendingIntent(
+                R.id.widget_btn_navigate,
+                createPendingIntent(context, WidgetActionReceiver.ACTION_NAVIGATE, 1)
             )
-            views.setOnClickPendingIntent(R.id.widget_btn_navigate, navigatePendingIntent)
 
-            // Actualiza el widget
             appWidgetManager.updateAppWidget(appWidgetId, views)
+        }
+
+        private fun createPendingIntent(context: Context, action: String, requestCode: Int): PendingIntent {
+            val intent = Intent(context, WidgetActionReceiver::class.java).apply {
+                this.action = action
+            }
+            return PendingIntent.getBroadcast(
+                context,
+                requestCode,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
         }
     }
 }

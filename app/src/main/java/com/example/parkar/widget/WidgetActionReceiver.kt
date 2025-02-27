@@ -11,89 +11,63 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.turbodev.parkar.R
-import com.turbodev.parkar.location.ParkingPreferences // Import corrected package
+import com.turbodev.parkar.location.ParkingPreferences
 import com.turbodev.parkar.service.LocationForegroundService
 
 class WidgetActionReceiver : BroadcastReceiver() {
 
     @SuppressLint("MissingPermission")
     override fun onReceive(context: Context, intent: Intent) {
-        val parkingPreferences = ParkingPreferences(context) // Use the corrected ParkingPreferences class
+        val parkingPreferences = ParkingPreferences(context)
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val thisAppWidget = ComponentName(context.packageName, ParKarWidgetProvider::class.java.name)
         val appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget)
 
         when (intent.action) {
             ACTION_SAVE_LOCATION -> {
-                // Actualiza el botón a estado "processing"
                 updateSaveButtonState(context, appWidgetManager, appWidgetIds, ButtonState.PROCESSING)
-
-                // Verifica si tenemos permisos de localización
                 if (hasLocationPermission(context)) {
-                    // Inicia el Foreground Service que se encargará de obtener y guardar la ubicación
                     val serviceIntent = Intent(context, LocationForegroundService::class.java)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         context.startForegroundService(serviceIntent)
                     } else {
                         context.startService(serviceIntent)
                     }
-                    // Nota: El servicio se encargará de actualizar la UI (por ejemplo, cambiando a SUCCESS o ERROR)
                 } else {
-                    Toast.makeText(
-                        context,
-                        "Se requieren permisos de ubicación. Abre la app primero.",
-                        Toast.LENGTH_LONG
-                    ).show()
-
-                    // Actualiza el botón a estado "error"
+                    showToast(context, context.getString(R.string.location_permission_required))
                     updateSaveButtonState(context, appWidgetManager, appWidgetIds, ButtonState.ERROR)
-                    // Vuelve al estado normal después de 2 segundos
                     Handler(Looper.getMainLooper()).postDelayed({
                         updateSaveButtonState(context, appWidgetManager, appWidgetIds, ButtonState.NORMAL)
                     }, 2000)
-
-                    // Abre la aplicación principal para solicitar permisos
-                    val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
-                    launchIntent?.let { context.startActivity(it) }
+                    context.packageManager.getLaunchIntentForPackage(context.packageName)?.let { context.startActivity(it) }
                 }
             }
             ACTION_NAVIGATE -> {
-                val parkingLocation = parkingPreferences.getParkingLocation()
-
-                if (parkingLocation != null) {
-                    val (latitude, longitude) = parkingLocation.latitude to parkingLocation.longitude // Adapt to LatLng return from getParkingLocation() if needed, but not needed as getParkingLocation() returns LatLng now. Just destructuring the LatLng object directly is fine.
-                    // val latitude = parkingLocation.latitude // If getParkingLocation returns Pair<Double, Double>
-                    // val longitude = parkingLocation.longitude // If getParkingLocation returns Pair<Double, Double>
-
-                    // Intenta abrir con Google Maps primero
-                    val gmmIntentUri = Uri.parse("google.navigation:q=$latitude,$longitude")
-                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                    mapIntent.setPackage("com.google.android.apps.maps")
-
-                    if (mapIntent.resolveActivity(context.packageManager) != null) {
-                        mapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        context.startActivity(mapIntent)
-                    } else {
-                        // Fallback a cualquier app de mapas
-                        val genericMapIntent = Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude")
-                        )
-                        genericMapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        context.startActivity(genericMapIntent)
-                    }
-                } else {
-                    Toast.makeText(
-                        context,
-                        "No hay ubicación guardada. Guarda la ubicación primero.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                parkingPreferences.getParkingLocation()?.let { location ->
+                    openNavigationApp(context, location.latitude, location.longitude)
+                } ?: showToast(context, context.getString(R.string.no_saved_location))
             }
+        }
+    }
+
+    private fun openNavigationApp(context: Context, latitude: Double, longitude: Double) {
+        val gmmIntentUri = Uri.parse("google.navigation:q=$latitude,$longitude")
+        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri).apply {
+            setPackage("com.google.android.apps.maps")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        if (mapIntent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(mapIntent)
+        } else {
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude")).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            })
         }
     }
 
@@ -103,28 +77,25 @@ class WidgetActionReceiver : BroadcastReceiver() {
         appWidgetIds: IntArray,
         state: ButtonState
     ) {
-        val views = RemoteViews(context.packageName, R.layout.parkar_widget)
-
-        when (state) {
-            ButtonState.NORMAL -> views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_normal)
-            ButtonState.PROCESSING -> views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_processing)
-            ButtonState.SUCCESS -> views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_success)
-            ButtonState.ERROR -> views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_error)
+        val views = RemoteViews(context.packageName, R.layout.parkar_widget).apply {
+            val resource = when (state) {
+                ButtonState.NORMAL -> R.drawable.save_button_normal
+                ButtonState.PROCESSING -> R.drawable.save_button_processing
+                ButtonState.SUCCESS -> R.drawable.save_button_success
+                ButtonState.ERROR -> R.drawable.save_button_error
+            }
+            setInt(R.id.widget_btn_save, "setBackgroundResource", resource)
         }
-
-        // Actualiza todas las instancias del widget
         appWidgetIds.forEach { appWidgetManager.updateAppWidget(it, views) }
     }
 
     private fun hasLocationPermission(context: Context): Boolean {
-        return ContextCompat.checkSelfPermission(
-            context,
-            android.Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(
-                    context,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
+        return ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun showToast(context: Context, message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     enum class ButtonState {
