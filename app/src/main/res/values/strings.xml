@@ -6,4 +6,7 @@
     <string name="error_getting_location">Error al obtener la ubicación</string>
     <string name="error_unexpected">Error inesperado: %1$s</string>
     <string name="no_saved_location">No hay ubicación guardada</string>
+    <string name="notification_title">Obteniendo ubicación</string>
+    <string name="notification_text">Por favor, espera...</string>
+    <string name="location_service_channel_name">Servicio de ubicación</string>
 </resources>

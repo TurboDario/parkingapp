@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.turbodev.parkar.R
@@ -30,16 +31,15 @@ class LocationForegroundService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // Inicia el servicio en primer plano con una notificación silenciosa
         startForeground(1, createNotification())
         getLocationAndSave()
         return START_NOT_STICKY
     }
 
     private fun createNotification() = NotificationCompat.Builder(this, "location_channel").apply {
-        setContentTitle("Obteniendo ubicación")
-        setContentText("Por favor, espera...")
-        setSmallIcon(R.drawable.ic_navigate)  // Usa un ícono discreto
+        setContentTitle(getString(R.string.notification_title))
+        setContentText(getString(R.string.notification_text))
+        setSmallIcon(R.drawable.ic_navigate)
         setPriority(NotificationCompat.PRIORITY_LOW)
         setSound(null)
         setVibrate(longArrayOf(0L))
@@ -47,14 +47,13 @@ class LocationForegroundService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "location_channel",
-                "Servicio de ubicación",
+                getString(R.string.location_service_channel_name),
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
                 setSound(null, null)
                 enableVibration(false)
             }
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
+            getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
         }
     }
 
@@ -62,68 +61,45 @@ class LocationForegroundService : Service() {
     private fun getLocationAndSave() {
         fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
             .addOnSuccessListener { location ->
-                val appWidgetManager = AppWidgetManager.getInstance(this)
-                // Usa 'this' en lugar de 'packageName'
-                val thisAppWidget = ComponentName(this, ParKarWidgetProvider::class.java)
-                val appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget)
-                val views = RemoteViews(packageName, R.layout.parkar_widget)
-
-                if (location != null) {
-                    val parkingPreferences = ParkingPreferences(this)
-                    parkingPreferences.saveParkingLocation(location.latitude, location.longitude)
-                    // Actualiza a estado SUCCESS (fondo verde)
-                    views.setInt(
-                        R.id.widget_btn_save,
-                        "setBackgroundResource",
-                        R.drawable.save_button_success
-                    )
-                } else {
-                    // En caso de fallo, actualiza a estado ERROR
-                    views.setInt(
-                        R.id.widget_btn_save,
-                        "setBackgroundResource",
-                        R.drawable.save_button_error
-                    )
+                updateWidget(location != null)
+                location?.let {
+                    ParkingPreferences(this).saveParkingLocation(it.latitude, it.longitude)
                 }
-                // Actualiza el widget
-                appWidgetIds.forEach { appWidgetManager.updateAppWidget(it, views) }
-
-                // Reinicia a NORMAL después de 2 segundos
-                Handler(Looper.getMainLooper()).postDelayed({
-                    views.setInt(
-                        R.id.widget_btn_save,
-                        "setBackgroundResource",
-                        R.drawable.save_button_normal
-                    )
-                    appWidgetIds.forEach { appWidgetManager.updateAppWidget(it, views) }
-                    stopSelf()
-                }, 2000)
+                resetWidgetAfterDelay()
             }
             .addOnFailureListener { e ->
-                val appWidgetManager = AppWidgetManager.getInstance(this)
-                val thisAppWidget = ComponentName(this, ParKarWidgetProvider::class.java)
-                val appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget)
-                val views = RemoteViews(packageName, R.layout.parkar_widget)
-                views.setInt(
-                    R.id.widget_btn_save,
-                    "setBackgroundResource",
-                    R.drawable.save_button_error
-                )
-                appWidgetIds.forEach { appWidgetManager.updateAppWidget(it, views) }
-
-                Handler(Looper.getMainLooper()).postDelayed({
-                    views.setInt(
-                        R.id.widget_btn_save,
-                        "setBackgroundResource",
-                        R.drawable.save_button_normal
-                    )
-                    appWidgetIds.forEach { appWidgetManager.updateAppWidget(it, views) }
-                    stopSelf()
-                }, 2000)
+                Log.e("LocationForegroundService", "Error getting location", e)
+                updateWidget(false)
+                resetWidgetAfterDelay()
             }
     }
 
+    private fun updateWidget(success: Boolean) {
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        val thisAppWidget = ComponentName(this, ParKarWidgetProvider::class.java)
+        val appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget)
+        val views = RemoteViews(packageName, R.layout.parkar_widget)
 
+        views.setInt(
+            R.id.widget_btn_save,
+            "setBackgroundResource",
+            if (success) R.drawable.save_button_success else R.drawable.save_button_error
+        )
+        appWidgetIds.forEach { appWidgetManager.updateAppWidget(it, views) }
+    }
 
-        override fun onBind(intent: Intent?): IBinder? = null
+    private fun resetWidgetAfterDelay() {
+        Handler(Looper.getMainLooper()).postDelayed({
+            val appWidgetManager = AppWidgetManager.getInstance(this)
+            val thisAppWidget = ComponentName(this, ParKarWidgetProvider::class.java)
+            val appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget)
+            val views = RemoteViews(packageName, R.layout.parkar_widget)
+
+            views.setInt(R.id.widget_btn_save, "setBackgroundResource", R.drawable.save_button_normal)
+            appWidgetIds.forEach { appWidgetManager.updateAppWidget(it, views) }
+            stopSelf()
+        }, 2000)
+    }
+
+    override fun onBind(intent: Intent?): IBinder? = null
 }
