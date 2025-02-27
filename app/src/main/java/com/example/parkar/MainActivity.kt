@@ -3,7 +3,6 @@ package com.turbodev.parkar
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -13,12 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
@@ -88,7 +82,7 @@ class MainActivity : ComponentActivity() {
                 onManualLocationClick = { onScreenChange(Screen.MANUAL_LOCATION) },
                 themeState = themeState,
                 onThemeChange = { themeState.value = it },
-                onAboutClick = { this@MainActivity.currentScreen = Screen.ABOUT }
+                onAboutClick = { onScreenChange(Screen.ABOUT) }
             )
             Screen.MANUAL_LOCATION -> ManualLocationScreen(
                 initialLocation = currentLocation,
@@ -96,18 +90,10 @@ class MainActivity : ComponentActivity() {
                 onCancel = { onScreenChange(Screen.HOME) }
             )
             Screen.ABOUT -> AboutScreen(
-                onBackClick = { this@MainActivity.currentScreen = Screen.HOME },
-                onOpenDocument = { title, content -> openDocumentScreen(title, content, onScreenChange) }
+                onBackClick = { onScreenChange(Screen.HOME) }
             )
         }
     }
-
-    private fun openDocumentScreen(title: String, content: String, onScreenChange: (Screen) -> Unit) {
-        // Aquí podrías almacenar el documento en una variable de estado y cambiar la pantalla
-        Log.d("AboutScreen", "Opening document: $title")
-        // Si deseas agregar una pantalla específica para mostrar el documento, puedes modificar `Screen`
-    }
-
 
     private fun checkLocationPermissions() {
         val hasFineLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
