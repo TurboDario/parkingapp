@@ -77,4 +77,18 @@ class LocationManager(private val context: Context) {
     private fun showToast(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
+
+    fun shareCurrentLocation() {
+        val currentLocation = parkingPreferences.getParkingLocation()
+        if (currentLocation != null) {
+            val mapsUrl = "https://www.google.com/maps/search/?api=1&query=${currentLocation.latitude},${currentLocation.longitude}"
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, mapsUrl)
+            }
+            context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_location)))
+        } else {
+            showToast(context.getString(R.string.no_saved_location))
+        }
+    }
 }

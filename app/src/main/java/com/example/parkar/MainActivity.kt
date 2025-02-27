@@ -82,7 +82,10 @@ class MainActivity : ComponentActivity() {
                 onManualLocationClick = { onScreenChange(Screen.MANUAL_LOCATION) },
                 themeState = themeState,
                 onThemeChange = { themeState.value = it },
-                onAboutClick = { onScreenChange(Screen.ABOUT) }
+                onAboutClick = { onScreenChange(Screen.ABOUT) },
+                onShareLocation = {
+                    locationManager.shareCurrentLocation()
+                },
             )
             Screen.MANUAL_LOCATION -> ManualLocationScreen(
                 initialLocation = currentLocation,
