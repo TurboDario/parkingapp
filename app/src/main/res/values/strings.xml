@@ -20,4 +20,14 @@
     <string name="central_location">Ubicación central</string>
     <string name="save_selected_location">Guardar ubicación seleccionada</string>
     <string name="cancel">Cancelar</string>
+    <string name="about">Acerca de</string>
+    <string name="back">Volver</string>
+    <string name="version">Versión: %1$s</string>
+    <string name="developer_name">Desarrollado por TurboDev</string>
+    <string name="eula">EULA</string>
+    <string name="privacy_policy">Política de Privacidad</string>
+    <string name="terms_and_conditions">Términos y Condiciones</string>
+    <string name="contact_support">Contacto de Soporte</string>
+    <string name="rate_us">Valóranos en Google Play</string>
+
 </resources>

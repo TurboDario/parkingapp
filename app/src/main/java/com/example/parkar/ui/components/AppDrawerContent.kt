@@ -14,11 +14,9 @@ import com.turbodev.parkar.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppDrawerContent(
-    onOption1Click: () -> Unit,
-    onOption2Click: () -> Unit,
     themeState: MutableState<Boolean>,
     onThemeChange: (Boolean) -> Unit,
-    onManualLocationClick: () -> Unit
+    onAboutClick: () -> Unit
 ) {
     val drawerWidth = LocalConfiguration.current.screenWidthDp.dp * 0.5f
 
@@ -47,6 +45,14 @@ fun AppDrawerContent(
             },
             selected = false,
             onClick = {},
+            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        HorizontalDivider()
+        NavigationDrawerItem(
+            label = { Text(stringResource(R.string.about)) },
+            selected = false,
+            onClick = onAboutClick,
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
         )
     }

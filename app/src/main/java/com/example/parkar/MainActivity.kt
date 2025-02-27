@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
 import com.turbodev.parkar.location.LocationManager
+import com.turbodev.parkar.ui.screens.AboutScreen
 import com.turbodev.parkar.ui.screens.HomeScreen
 
 class MainActivity : ComponentActivity() {
@@ -31,7 +32,7 @@ class MainActivity : ComponentActivity() {
     private var currentScreen by mutableStateOf(Screen.HOME)
 
     enum class Screen {
-        HOME, MANUAL_LOCATION
+        HOME, MANUAL_LOCATION, ABOUT
     }
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -86,15 +87,27 @@ class MainActivity : ComponentActivity() {
                 onNavigateToCar = { locationManager.navigateToParkingLocation() },
                 onManualLocationClick = { onScreenChange(Screen.MANUAL_LOCATION) },
                 themeState = themeState,
-                onThemeChange = { themeState.value = it }
+                onThemeChange = { themeState.value = it },
+                onAboutClick = { this@MainActivity.currentScreen = Screen.ABOUT }
             )
             Screen.MANUAL_LOCATION -> ManualLocationScreen(
                 initialLocation = currentLocation,
                 onSaveManualLocation = { onSaveLocation(it) },
                 onCancel = { onScreenChange(Screen.HOME) }
             )
+            Screen.ABOUT -> AboutScreen(
+                onBackClick = { this@MainActivity.currentScreen = Screen.HOME },
+                onOpenDocument = { title, content -> openDocumentScreen(title, content, onScreenChange) }
+            )
         }
     }
+
+    private fun openDocumentScreen(title: String, content: String, onScreenChange: (Screen) -> Unit) {
+        // Aquí podrías almacenar el documento en una variable de estado y cambiar la pantalla
+        Log.d("AboutScreen", "Opening document: $title")
+        // Si deseas agregar una pantalla específica para mostrar el documento, puedes modificar `Screen`
+    }
+
 
     private fun checkLocationPermissions() {
         val hasFineLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)

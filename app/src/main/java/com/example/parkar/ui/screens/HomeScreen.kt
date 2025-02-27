@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
+import com.turbodev.parkar.MainActivity
 import com.turbodev.parkar.R
 import com.turbodev.parkar.ui.components.AppDrawerContent
 import kotlinx.coroutines.launch
@@ -26,10 +27,9 @@ fun HomeScreen(
     onSaveParkingLocation: () -> Unit,
     onNavigateToCar: () -> Unit,
     onManualLocationClick: () -> Unit = {},
-    onOption1Click: () -> Unit = {},
-    onOption2Click: () -> Unit = {},
     themeState: MutableState<Boolean>,
-    onThemeChange: (Boolean) -> Unit
+    onThemeChange: (Boolean) -> Unit,
+    onAboutClick: () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -38,11 +38,9 @@ fun HomeScreen(
         drawerState = drawerState,
         drawerContent = {
             AppDrawerContent(
-                onOption1Click = onOption1Click,
-                onOption2Click = onOption2Click,
                 themeState = themeState,
                 onThemeChange = onThemeChange,
-                onManualLocationClick = onManualLocationClick
+                onAboutClick = onAboutClick
             )
         }
     ) {

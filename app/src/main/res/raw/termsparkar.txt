@@ -1,0 +1,37 @@
+
+TERMS AND CONDITIONS
+
+Last Updated: [DATE]
+
+These Terms and Conditions ("Terms") govern the use of the mobile application "ParKar" ("Application"), developed by TurboDev ("Developer"). By using the Application, you accept these Terms.
+
+1. USE OF THE APPLICATION
+- The Application is provided **as is** and requires location services to function properly.
+- Users must comply with applicable laws.
+
+2. ACCURACY OF LOCATION DATA
+- The Developer does not guarantee the accuracy of location data. The User assumes all risks associated with using the Application.
+- The Developer is not responsible for damages caused by incorrect or imprecise location data.
+
+3. PRIVACY POLICY
+- The Application **does not collect personal data**.
+- All location data is stored on the User’s device.
+- The User can delete all stored location data by uninstalling the Application.
+
+4. MODIFICATIONS TO THE APPLICATION
+- The Developer reserves the right to modify or discontinue the Application at any time.
+
+5. FUTURE MONETIZATION AND PREMIUM FEATURES
+- The Developer may introduce **premium features** requiring a paid subscription in the future.
+- Pricing and terms for premium features will be disclosed upon implementation.
+
+6. CHANGES TO TERMS
+- The Developer reserves the right to modify these Terms.
+- Users will be notified of changes through updates or in-app notifications.
+
+7. GOVERNING LAW
+These Terms are governed by the laws of [YOUR COUNTRY].
+
+CONTACT INFORMATION
+For questions, contact: **turbomonguer.dev@gmail.com**
+
