@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -48,7 +49,6 @@ fun ManualLocationScreen(
 ) {
     val context = LocalContext.current
     var selectedLocation by remember { mutableStateOf(initialLocation) }
-    var currentCameraPosition by remember { mutableStateOf<CameraPosition?>(null) }
 
     val cameraPositionState = rememberCameraPositionState()
     val uiSettings = remember { MapUiSettings(zoomControlsEnabled = true, myLocationButtonEnabled = true) }
@@ -108,16 +108,16 @@ fun ManualLocationScreen(
                     cameraPositionState = cameraPositionState,
                     properties = properties,
                     uiSettings = uiSettings,
-                    // Eliminamos onMapClick y onMapLongClick
                 )
                 // Icono central fijo
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_location_pin), // Asegúrate de tener este icono en res/drawable
+                    painter = painterResource(id = R.drawable.ic_location_pin),
                     contentDescription = "Ubicación central",
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .padding(bottom = 48.dp), // Ajusta según sea necesario para que no lo tape el botón inferior
-                    tint = MaterialTheme.colorScheme.primary // O el color que desees
+                        .padding(bottom = 48.dp)
+                        .size(69.dp),
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
 
