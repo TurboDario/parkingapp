@@ -1,6 +1,8 @@
-package com.turbodev.parkar.ui.screens
+package com.turbodev.parkar
 
-
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,23 +18,54 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
-@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+@androidx.compose.material3.ExperimentalMaterial3Api
 @Composable
 fun ManualLocationScreen(
-    onSaveManualLocation: () -> Unit // Recibimos la función para guardar la ubicación (placeholder por ahora)
+    initialLocation: LatLng?,
+    onSaveManualLocation: (LatLng) -> Unit,
+    onCancel: () -> Unit
 ) {
+    val context = LocalContext.current
+    var selectedLocation by remember { mutableStateOf(initialLocation) }
+    var currentCameraPosition by remember { mutableStateOf<CameraPosition?>(null) }
+
+    val cameraPositionState = rememberCameraPositionState()
+    val uiSettings = remember { MapUiSettings(zoomControlsEnabled = true, myLocationButtonEnabled = true) }
+    val properties = remember { MapProperties(isMyLocationEnabled = true) }
+
+    // Cargar ubicación inicial
+    LaunchedEffect(Unit) {
+        if (selectedLocation == null) {
+            fetchLastKnownLocation(context) { location ->
+                location?.let {
+                    selectedLocation = it
+                    cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 17f)
+                }
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -43,9 +76,7 @@ fun ManualLocationScreen(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
             )
         }
     ) { innerPadding ->
@@ -54,8 +85,7 @@ fun ManualLocationScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
             Box(
                 modifier = Modifier
@@ -63,29 +93,68 @@ fun ManualLocationScreen(
                     .weight(1f)
             ) {
                 GoogleMap(
-
                     modifier = Modifier.fillMaxSize(),
-                    cameraPositionState = rememberCameraPositionState {
-                        position = CameraPosition.fromLatLngZoom(LatLng(0.0, 0.0), 5f)
+                    cameraPositionState = cameraPositionState,
+                    properties = properties,
+                    uiSettings = uiSettings,
+                    onMapClick = { clickedLocation ->
+                        selectedLocation = clickedLocation
                     },
-                    onMapLoaded = {
-                        Log.d("MyMap", "Map successfully loaded!")
-                    },
-                    properties = MapProperties(isMyLocationEnabled = false)
+                    onMapLongClick = { longClickedLocation ->
+                        selectedLocation = longClickedLocation
+                    }
                 ) {
-                    // Ejemplo: añadir un Marker
-                    Marker(
-                        state = MarkerState(position = LatLng(37.4221, -122.0841)),
-                        title = "Hello Google Maps"
-                    )
+                    selectedLocation?.let { location ->
+                        Marker(
+                            state = MarkerState(position = location),
+                            title = "Ubicación seleccionada"
+                        )
+                    }
                 }
             }
-            Spacer(modifier = Modifier.padding(16.dp))
-            Button(
-                onClick = onSaveManualLocation
+
+            Spacer(modifier = Modifier.padding(8.dp))
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text("Guardar Ubicación Manual Seleccionada")
+                Button(
+                    onClick = { selectedLocation?.let(onSaveManualLocation) },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = selectedLocation != null
+                ) {
+                    Text("Guardar Ubicación Seleccionada")
+                }
+
+                Button(
+                    onClick = onCancel,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Cancelar")
+                }
             }
         }
+    }
+}
+
+private fun fetchLastKnownLocation(context: Context, callback: (LatLng?) -> Unit) {
+    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) ==
+        PackageManager.PERMISSION_GRANTED) {
+
+        LocationServices.getFusedLocationProviderClient(context).lastLocation
+            .addOnSuccessListener { location ->
+                location?.let {
+                    callback(LatLng(it.latitude, it.longitude))
+                } ?: run {
+                    Log.d("ManualLocation", "No previous location available")
+                    callback(null)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("ManualLocation", "Error getting location: ${e.message}")
+                callback(null)
+            }
+    } else {
+        callback(null)
     }
 }
