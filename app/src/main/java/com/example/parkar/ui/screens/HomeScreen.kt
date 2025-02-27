@@ -25,11 +25,11 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     onSaveParkingLocation: () -> Unit,
     onNavigateToCar: () -> Unit,
+    onShareLocation: () -> Unit,
     onManualLocationClick: () -> Unit = {},
-    onOption1Click: () -> Unit = {},
-    onOption2Click: () -> Unit = {},
     themeState: MutableState<Boolean>,
-    onThemeChange: (Boolean) -> Unit
+    onThemeChange: (Boolean) -> Unit,
+    onAboutClick: () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -38,11 +38,9 @@ fun HomeScreen(
         drawerState = drawerState,
         drawerContent = {
             AppDrawerContent(
-                onOption1Click = onOption1Click,
-                onOption2Click = onOption2Click,
                 themeState = themeState,
                 onThemeChange = onThemeChange,
-                onManualLocationClick = onManualLocationClick
+                onAboutClick = onAboutClick
             )
         }
     ) {
@@ -80,7 +78,11 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    ParkingButton(onClick = onSaveParkingLocation, onEditClick = onManualLocationClick)
+                    ParkingButton(
+                        onClick = onSaveParkingLocation,
+                        onEditClick = onManualLocationClick,
+                        onShareClick = onShareLocation
+                    )
                     Spacer(modifier = Modifier.height(24.dp))
                     NavigateButton(onClick = onNavigateToCar)
                 }
@@ -90,7 +92,11 @@ fun HomeScreen(
 }
 
 @Composable
-fun ParkingButton(onClick: () -> Unit, onEditClick: () -> Unit) {
+fun ParkingButton(
+    onClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onShareClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth(0.6f)
@@ -130,6 +136,7 @@ fun ParkingButton(onClick: () -> Unit, onEditClick: () -> Unit) {
                 )
             }
         }
+        // Botón de editar (abajo a la derecha)
         IconButton(
             onClick = onEditClick,
             modifier = Modifier
@@ -147,6 +154,24 @@ fun ParkingButton(onClick: () -> Unit, onEditClick: () -> Unit) {
                 tint = MaterialTheme.colorScheme.primary
             )
         }
+        // Botón de compartir (arriba a la derecha)
+        IconButton(
+            onClick = onShareClick,
+            modifier = Modifier
+                .size(48.dp)
+                .padding(8.dp)
+                .align(Alignment.TopEnd),
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = Color.White
+            )
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_share_location),
+                contentDescription = stringResource(R.string.share_location),
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
     }
 }
 
@@ -155,7 +180,7 @@ fun NavigateButton(onClick: () -> Unit) {
     Button(
         onClick = onClick,
         modifier = Modifier
-            .fillMaxWidth(0.6f)
+            .fillMaxWidth(0.6f)  // Ahora utiliza el mismo ancho que ParkingButton
             .aspectRatio(1f)
             .shadow(elevation = 8.dp, shape = MaterialTheme.shapes.large),
         shape = MaterialTheme.shapes.large,

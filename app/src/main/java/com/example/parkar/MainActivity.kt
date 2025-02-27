@@ -3,7 +3,6 @@ package com.turbodev.parkar
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -13,16 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
 import com.turbodev.parkar.location.LocationManager
+import com.turbodev.parkar.ui.screens.AboutScreen
 import com.turbodev.parkar.ui.screens.HomeScreen
 
 class MainActivity : ComponentActivity() {
@@ -31,7 +26,7 @@ class MainActivity : ComponentActivity() {
     private var currentScreen by mutableStateOf(Screen.HOME)
 
     enum class Screen {
-        HOME, MANUAL_LOCATION
+        HOME, MANUAL_LOCATION, ABOUT
     }
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -86,12 +81,19 @@ class MainActivity : ComponentActivity() {
                 onNavigateToCar = { locationManager.navigateToParkingLocation() },
                 onManualLocationClick = { onScreenChange(Screen.MANUAL_LOCATION) },
                 themeState = themeState,
-                onThemeChange = { themeState.value = it }
+                onThemeChange = { themeState.value = it },
+                onAboutClick = { onScreenChange(Screen.ABOUT) },
+                onShareLocation = {
+                    locationManager.shareCurrentLocation()
+                },
             )
             Screen.MANUAL_LOCATION -> ManualLocationScreen(
                 initialLocation = currentLocation,
                 onSaveManualLocation = { onSaveLocation(it) },
                 onCancel = { onScreenChange(Screen.HOME) }
+            )
+            Screen.ABOUT -> AboutScreen(
+                onBackClick = { onScreenChange(Screen.HOME) }
             )
         }
     }

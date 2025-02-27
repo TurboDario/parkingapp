@@ -1,0 +1,34 @@
+
+PRIVACY POLICY
+
+Last Updated: [DATE]
+
+TurboDev ("Developer") is committed to protecting user privacy. This Privacy Policy explains how "ParKar" ("Application") handles user data.
+
+1. DATA COLLECTION
+- The Application **does not collect or transmit personal data**.
+- The Application only uses **location data**, which is stored **locally** on the User’s device.
+
+2. USE OF LOCATION DATA
+- The Application uses **Google Maps API** to determine location.
+- Location data is used exclusively for providing navigation features.
+
+3. SHARING OF DATA
+- The Application **does not share user data** with third parties.
+- The Developer **does not have access** to the User's location data.
+
+4. FUTURE UPDATES
+- Future versions may offer **cloud storage** for location data.
+- Users will have the option to **delete stored data**.
+
+5. USER RIGHTS
+- Users can stop using the Application at any time.
+- If cloud storage is implemented in the future, Users will have the right to request data deletion.
+
+6. CHANGES TO THIS POLICY
+- The Developer may update this Privacy Policy.
+- Users will be notified of changes through Application updates.
+
+CONTACT INFORMATION
+For privacy concerns, contact: **turbomonguer.dev@gmail.com**
+

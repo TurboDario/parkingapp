@@ -1,0 +1,44 @@
+
+END USER LICENSE AGREEMENT (EULA)
+
+Last Updated: [DATE]
+
+This End User License Agreement ("Agreement") is a legal agreement between you ("User") and TurboDev ("Developer"), governing the use of the mobile application "ParKar" ("Application").
+
+By installing, accessing, or using the Application, you agree to be bound by this Agreement. If you do not agree, do not install or use the Application.
+
+1. LICENSE GRANT
+Developer grants User a non-exclusive, non-transferable, revocable license to use the Application for personal, non-commercial purposes.
+
+2. RESTRICTIONS
+User agrees NOT to:
+- Modify, disassemble, decompile, or reverse engineer the Application.
+- Use the Application for commercial purposes or resell it.
+- Distribute, sublicense, or make copies of the Application.
+
+3. OWNERSHIP
+The Application is the exclusive property of Developer. This Agreement does not grant User any intellectual property rights.
+
+4. USE OF LOCATION DATA
+- The Application requires access to the User's location to function properly.
+- Location data is stored **locally** on the User’s device and not transmitted to external servers.
+- The Application uses the **Google Maps API** to retrieve and display location data.
+
+5. DISCLAIMER OF WARRANTIES
+The Application is provided "AS IS" without any warranties. The Developer is not responsible for errors, inaccuracies, or issues arising from location services.
+
+6. LIMITATION OF LIABILITY
+Developer shall not be liable for any damages arising from the use or inability to use the Application.
+
+7. FUTURE PREMIUM SERVICES
+The Developer may introduce a **paid subscription plan** for additional features in future versions of the Application.
+
+8. TERMINATION
+Developer may terminate this Agreement if User violates any terms. Upon termination, User must delete the Application from all devices.
+
+9. GOVERNING LAW
+This Agreement is governed by the laws of [YOUR COUNTRY].
+
+CONTACT INFORMATION
+For inquiries, contact: **turbomonguer.dev@gmail.com**
+
