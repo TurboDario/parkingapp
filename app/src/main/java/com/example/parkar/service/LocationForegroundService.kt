@@ -14,11 +14,11 @@ import android.os.Looper
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.turbodev.parkar.R
-import com.turbodev.parkar.data.ParkingPreferences
 import com.turbodev.parkar.widget.ParKarWidgetProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.turbodev.parkar.location.ParkingPreferences
 
 class LocationForegroundService : Service() {
 

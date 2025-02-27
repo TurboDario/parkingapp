@@ -15,14 +15,14 @@ import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.turbodev.parkar.R
-import com.turbodev.parkar.data.ParkingPreferences
+import com.turbodev.parkar.location.ParkingPreferences // Import corrected package
 import com.turbodev.parkar.service.LocationForegroundService
 
 class WidgetActionReceiver : BroadcastReceiver() {
 
     @SuppressLint("MissingPermission")
     override fun onReceive(context: Context, intent: Intent) {
-        val parkingPreferences = ParkingPreferences(context)
+        val parkingPreferences = ParkingPreferences(context) // Use the corrected ParkingPreferences class
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val thisAppWidget = ComponentName(context.packageName, ParKarWidgetProvider::class.java.name)
         val appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget)
@@ -65,7 +65,9 @@ class WidgetActionReceiver : BroadcastReceiver() {
                 val parkingLocation = parkingPreferences.getParkingLocation()
 
                 if (parkingLocation != null) {
-                    val (latitude, longitude) = parkingLocation
+                    val (latitude, longitude) = parkingLocation.latitude to parkingLocation.longitude // Adapt to LatLng return from getParkingLocation() if needed, but not needed as getParkingLocation() returns LatLng now. Just destructuring the LatLng object directly is fine.
+                    // val latitude = parkingLocation.latitude // If getParkingLocation returns Pair<Double, Double>
+                    // val longitude = parkingLocation.longitude // If getParkingLocation returns Pair<Double, Double>
 
                     // Intenta abrir con Google Maps primero
                     val gmmIntentUri = Uri.parse("google.navigation:q=$latitude,$longitude")
