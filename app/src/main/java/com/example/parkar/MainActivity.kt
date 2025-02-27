@@ -3,6 +3,7 @@ package com.turbodev.parkar
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -36,6 +37,14 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Loguea la API key en onCreate()
+        try {
+            val appInfo = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+            val apiKey = appInfo.metaData.getString("com.google.android.geo.API_KEY")
+            Log.d("MAPS_API_KEY", "Key en runtime: $apiKey")
+        } catch (e: Exception) {
+            Log.e("MAPS_API_KEY", "Error al obtener la API key", e)
+        }
 
         // Inicializar el administrador de ubicación
         locationManager = LocationManager(this)
@@ -111,4 +120,5 @@ class MainActivity : ComponentActivity() {
             locationManager.initLocationClient()
         }
     }
+
 }

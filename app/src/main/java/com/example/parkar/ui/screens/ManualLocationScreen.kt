@@ -1,6 +1,7 @@
 package com.turbodev.parkar.ui.screens
 
-import androidx.compose.foundation.background
+
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,9 +18,15 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -50,20 +57,32 @@ fun ManualLocationScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Box( // Placeholder para el mapa - un simple cuadro gris
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f) // Ocupa la mayor parte de la pantalla
-                    .background(Color.LightGray) // Color gris claro para simular el mapa
+                    .weight(1f)
             ) {
-                Text(
-                    text = "Mapa Placeholder - Aquí irá el mapa real",
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                GoogleMap(
+
+                    modifier = Modifier.fillMaxSize(),
+                    cameraPositionState = rememberCameraPositionState {
+                        position = CameraPosition.fromLatLngZoom(LatLng(0.0, 0.0), 5f)
+                    },
+                    onMapLoaded = {
+                        Log.d("MyMap", "Map successfully loaded!")
+                    },
+                    properties = MapProperties(isMyLocationEnabled = false)
+                ) {
+                    // Ejemplo: añadir un Marker
+                    Marker(
+                        state = MarkerState(position = LatLng(37.4221, -122.0841)),
+                        title = "Hello Google Maps"
+                    )
+                }
             }
             Spacer(modifier = Modifier.padding(16.dp))
             Button(
-                onClick = onSaveManualLocation // Al hacer clic, llamamos a la función para guardar (placeholder)
+                onClick = onSaveManualLocation
             ) {
                 Text("Guardar Ubicación Manual Seleccionada")
             }

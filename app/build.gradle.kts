@@ -18,6 +18,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        // Configura el placeholder para la API key
+        manifestPlaceholders["MAPS_API_KEY"] = project.findProperty("MAPS_API_KEY") ?: "default_key_for_debug"
     }
 
     buildTypes {
@@ -81,5 +84,4 @@ dependencies {
     // Maps
     implementation(libs.play.services.maps)
     implementation(libs.maps.compose)
-
 }
