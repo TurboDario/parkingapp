@@ -29,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationServices
@@ -39,6 +38,7 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.turbodev.parkar.R
 
 @androidx.compose.material3.ExperimentalMaterial3Api
 @Composable
@@ -49,13 +49,11 @@ fun ManualLocationScreen(
 ) {
     val context = LocalContext.current
     var selectedLocation by remember { mutableStateOf(initialLocation) }
-
     val cameraPositionState = rememberCameraPositionState()
     val uiSettings = remember { MapUiSettings(zoomControlsEnabled = true, myLocationButtonEnabled = true) }
     val properties = remember { MapProperties(isMyLocationEnabled = true) }
 
-    // Cargar ubicación inicial y centrar la cámara
-    LaunchedEffect(Unit) {
+    LaunchedEffect(selectedLocation) {
         if (selectedLocation == null) {
             fetchLastKnownLocation(context) { location ->
                 location?.let {
@@ -70,7 +68,6 @@ fun ManualLocationScreen(
         }
     }
 
-    // Actualizar selectedLocation cuando la cámara se mueva y quede inactiva
     LaunchedEffect(cameraPositionState.isMoving) {
         if (!cameraPositionState.isMoving) {
             selectedLocation = cameraPositionState.position.target
@@ -82,8 +79,8 @@ fun ManualLocationScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Seleccionar Ubicación Manual",
-                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                        text = context.getString(R.string.select_manual_location),
+                        style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 },
@@ -109,10 +106,9 @@ fun ManualLocationScreen(
                     properties = properties,
                     uiSettings = uiSettings,
                 )
-                // Icono central fijo
                 Icon(
                     painter = painterResource(id = R.drawable.ic_location_pin),
-                    contentDescription = "Ubicación central",
+                    contentDescription = context.getString(R.string.central_location),
                     modifier = Modifier
                         .align(Alignment.Center)
                         .padding(bottom = 48.dp)
@@ -131,14 +127,14 @@ fun ManualLocationScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = selectedLocation != null
                 ) {
-                    Text("Guardar Ubicación Seleccionada")
+                    Text(context.getString(R.string.save_selected_location))
                 }
 
                 Button(
                     onClick = onCancel,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Cancelar")
+                    Text(context.getString(R.string.cancel))
                 }
             }
         }
@@ -151,15 +147,10 @@ private fun fetchLastKnownLocation(context: Context, callback: (LatLng?) -> Unit
 
         LocationServices.getFusedLocationProviderClient(context).lastLocation
             .addOnSuccessListener { location ->
-                location?.let {
-                    callback(LatLng(it.latitude, it.longitude))
-                } ?: run {
-                    Log.d("ManualLocation", "No previous location available")
-                    callback(null)
-                }
+                callback(location?.let { LatLng(it.latitude, it.longitude) })
             }
             .addOnFailureListener { e ->
-                Log.e("ManualLocation", "Error getting location: ${e.message}")
+                Log.e("ManualLocation", "Error getting location: ${e.message}", e)
                 callback(null)
             }
     } else {

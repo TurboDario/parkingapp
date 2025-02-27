@@ -1,9 +1,9 @@
 package com.turbodev.parkar.location
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.google.android.gms.maps.model.LatLng
-import android.content.SharedPreferences
 
 class ParkingPreferences(context: Context) {
 
@@ -11,9 +11,6 @@ class ParkingPreferences(context: Context) {
         PREFERENCES_NAME, Context.MODE_PRIVATE
     )
 
-    /**
-     * Guarda la ubicación del aparcamiento en SharedPreferences
-     */
     fun saveParkingLocation(latitude: Double, longitude: Double) {
         sharedPreferences.edit {
             putFloat(KEY_LATITUDE, latitude.toFloat())
@@ -21,15 +18,11 @@ class ParkingPreferences(context: Context) {
         }
     }
 
-    /**
-     * Obtiene la ubicación del aparcamiento guardada
-     * @return Un objeto LatLng que representa la ubicación (latitud, longitud) o null si no hay ubicación guardada
-     */
     fun getParkingLocation(): LatLng? {
-        val latitude = sharedPreferences.getFloat(KEY_LATITUDE, 0.0f)
-        val longitude = sharedPreferences.getFloat(KEY_LONGITUDE, 0.0f)
+        val latitude = sharedPreferences.getFloat(KEY_LATITUDE, DEFAULT_COORDINATE)
+        val longitude = sharedPreferences.getFloat(KEY_LONGITUDE, DEFAULT_COORDINATE)
 
-        return if (latitude != 0.0f || longitude != 0.0f) {
+        return if (latitude != DEFAULT_COORDINATE || longitude != DEFAULT_COORDINATE) {
             LatLng(latitude.toDouble(), longitude.toDouble())
         } else {
             null
@@ -40,5 +33,6 @@ class ParkingPreferences(context: Context) {
         private const val PREFERENCES_NAME = "parking_preferences"
         private const val KEY_LATITUDE = "latitude"
         private const val KEY_LONGITUDE = "longitude"
+        private const val DEFAULT_COORDINATE = 0.0f
     }
 }
