@@ -10,12 +10,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.graphics.Color
 import com.turbomonguerdev.parkar.R
 import com.turbomonguerdev.parkar.ui.components.AppDrawerContent
 import kotlinx.coroutines.launch
@@ -78,12 +79,39 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    ParkingButton(
-                        onClick = onSaveParkingLocation,
-                        onEditClick = onManualLocationClick,
-                        onShareClick = onShareLocation
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        ParkingButton(
+                            onClick = onSaveParkingLocation,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .fillMaxWidth(0.6f)
+                                .aspectRatio(1f)
+                        )
+
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .padding(start = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            SmallActionButton(
+                                onClick = onManualLocationClick,
+                                iconRes = R.drawable.ic_edit_location,
+                                contentDescription = stringResource(R.string.edit_parking)
+                            )
+                            SmallActionButton(
+                                onClick = onShareLocation,
+                                iconRes = R.drawable.ic_share_location,
+                                contentDescription = stringResource(R.string.share_location)
+                            )
+                        }
+                    }
+
                     Spacer(modifier = Modifier.height(24.dp))
+
                     NavigateButton(onClick = onNavigateToCar)
                 }
             }
@@ -92,86 +120,56 @@ fun HomeScreen(
 }
 
 @Composable
-fun ParkingButton(
-    onClick: () -> Unit,
-    onEditClick: () -> Unit,
-    onShareClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth(0.6f)
-            .aspectRatio(1f)
+fun ParkingButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Button(
+        onClick = onClick,
+        modifier = modifier
+            .shadow(elevation = 8.dp, shape = MaterialTheme.shapes.large),
+        shape = MaterialTheme.shapes.large,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        )
     ) {
-        Button(
-            onClick = onClick,
-            modifier = Modifier
-                .fillMaxSize()
-                .shadow(elevation = 8.dp, shape = MaterialTheme.shapes.large),
-            shape = MaterialTheme.shapes.large,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ),
-            elevation = ButtonDefaults.buttonElevation(
-                defaultElevation = 8.dp,
-                pressedElevation = 4.dp
-            )
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_car),
-                    contentDescription = stringResource(R.string.save_parking_location),
-                    modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.save_parking),
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-        // Botón de editar (abajo a la derecha)
-        IconButton(
-            onClick = onEditClick,
-            modifier = Modifier
-                .size(48.dp)
-                .padding(8.dp)
-                .align(Alignment.BottomEnd),
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = Color.White
-            )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_edit_location),
-                contentDescription = stringResource(R.string.edit_parking),
-                modifier = Modifier.size(24.dp),
-                tint = MaterialTheme.colorScheme.primary
+                painter = painterResource(id = R.drawable.ic_car),
+                contentDescription = stringResource(R.string.save_parking_location),
+                modifier = Modifier.size(48.dp),
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.save_parking),
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                textAlign = TextAlign.Center
             )
         }
-        // Botón de compartir (arriba a la derecha)
-        IconButton(
-            onClick = onShareClick,
-            modifier = Modifier
-                .size(48.dp)
-                .padding(8.dp)
-                .align(Alignment.TopEnd),
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = Color.White
-            )
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_share_location),
-                contentDescription = stringResource(R.string.share_location),
-                modifier = Modifier.size(24.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
+    }
+}
+
+@Composable
+fun SmallActionButton(onClick: () -> Unit, iconRes: Int, contentDescription: String) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .size(64.dp)
+            .shadow(8.dp, shape = MaterialTheme.shapes.large),
+        shape = MaterialTheme.shapes.large,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        )
+    ) {
+        Icon(
+            painter = painterResource(id = iconRes),
+            contentDescription = contentDescription,
+            tint = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.size(32.dp)
+        )
     }
 }
 
@@ -180,7 +178,7 @@ fun NavigateButton(onClick: () -> Unit) {
     Button(
         onClick = onClick,
         modifier = Modifier
-            .fillMaxWidth(0.6f)  // Ahora utiliza el mismo ancho que ParkingButton
+            .fillMaxWidth(0.6f)
             .aspectRatio(1f)
             .shadow(elevation = 8.dp, shape = MaterialTheme.shapes.large),
         shape = MaterialTheme.shapes.large,
@@ -207,7 +205,6 @@ fun NavigateButton(onClick: () -> Unit) {
             Text(
                 text = stringResource(R.string.navigate_to_car),
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onSecondary,
                 textAlign = TextAlign.Center
             )
         }
