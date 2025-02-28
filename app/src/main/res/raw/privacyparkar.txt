@@ -3,7 +3,7 @@ PRIVACY POLICY
 
 Last Updated: [DATE]
 
-TurboDev ("Developer") is committed to protecting user privacy. This Privacy Policy explains how "ParKar" ("Application") handles user data.
+TurboMonguerDev ("Developer") is committed to protecting user privacy. This Privacy Policy explains how "ParKar" ("Application") handles user data.
 
 1. DATA COLLECTION
 - The Application **does not collect or transmit personal data**.

@@ -1,4 +1,4 @@
-package com.turbodev.parkar
+package com.turbomonguerdev.parkar
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -16,9 +16,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
-import com.turbodev.parkar.location.LocationManager
-import com.turbodev.parkar.ui.screens.AboutScreen
-import com.turbodev.parkar.ui.screens.HomeScreen
+import com.turbomonguerdev.parkar.location.LocationManager
+import com.turbomonguerdev.parkar.ui.screens.AboutScreen
+import com.turbomonguerdev.parkar.ui.screens.HomeScreen
 
 class MainActivity : ComponentActivity() {
     private lateinit var locationManager: LocationManager

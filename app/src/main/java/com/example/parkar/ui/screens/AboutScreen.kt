@@ -1,4 +1,4 @@
-package com.turbodev.parkar.ui.screens
+package com.turbomonguerdev.parkar.ui.screens
 
 import android.content.Context
 import android.content.Intent
@@ -14,19 +14,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.turbodev.parkar.BuildConfig
-import com.turbodev.parkar.R
+import com.turbomonguerdev.parkar.BuildConfig
+import com.turbomonguerdev.parkar.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(onBackClick: () -> Unit) {
     val context = LocalContext.current
 
-    val eulaUrl = "https://example.com/eula"
-    val termsUrl = "https://example.com/terms"
-    val privacyUrl = "https://example.com/privacy"
+    val eulaUrl = "https://turbodario.github.io/turbodev-docs/#EULA_ParKar.html"
+    val termsUrl = "https://turbodario.github.io/turbodev-docs/#Terms_ParKar.html"
+    val privacyUrl = "https://turbodario.github.io/turbodev-docs/#Privacy_ParKar.html"
     val supportEmail = "mailto:turbomonguer.dev@gmail.com"
-    val playStoreUrl = "https://play.google.com/store/apps/details?id=com.turbodev.parkar"
+    val playStoreUrl = "https://play.google.com/store/apps/details?id=com.turbomonguerdev.parkar"
 
     Scaffold(
         topBar = {

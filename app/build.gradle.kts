@@ -15,11 +15,11 @@ plugins {
 }
 
 android {
-    namespace = "com.turbodev.parkar"
+    namespace = "com.turbomonguerdev.parkar"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.turbodev.parkar"
+        applicationId = "com.turbomonguerdev.parkar"
         minSdk = 28
         targetSdk = 35
         versionCode = 1

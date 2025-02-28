@@ -1,4 +1,4 @@
-package com.turbodev.parkar.widget
+package com.turbomonguerdev.parkar.widget
 
 import android.annotation.SuppressLint
 import android.appwidget.AppWidgetManager
@@ -15,9 +15,9 @@ import android.util.Log
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import com.turbodev.parkar.R
-import com.turbodev.parkar.location.ParkingPreferences
-import com.turbodev.parkar.service.LocationForegroundService
+import com.turbomonguerdev.parkar.R
+import com.turbomonguerdev.parkar.location.ParkingPreferences
+import com.turbomonguerdev.parkar.service.LocationForegroundService
 
 class WidgetActionReceiver : BroadcastReceiver() {
 
@@ -103,7 +103,7 @@ class WidgetActionReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        const val ACTION_SAVE_LOCATION = "com.turbodev.parkar.widget.ACTION_SAVE_LOCATION"
-        const val ACTION_NAVIGATE = "com.turbodev.parkar.widget.ACTION_NAVIGATE"
+        const val ACTION_SAVE_LOCATION = "com.turbomonguerdev.parkar.widget.ACTION_SAVE_LOCATION"
+        const val ACTION_NAVIGATE = "com.turbomonguerdev.parkar.widget.ACTION_NAVIGATE"
     }
 }

@@ -1,4 +1,4 @@
-package com.turbodev.parkar
+package com.turbomonguerdev.parkar
 
 import android.Manifest
 import android.content.Context
@@ -38,7 +38,7 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
-import com.turbodev.parkar.R
+import com.turbomonguerdev.parkar.R
 
 @androidx.compose.material3.ExperimentalMaterial3Api
 @Composable

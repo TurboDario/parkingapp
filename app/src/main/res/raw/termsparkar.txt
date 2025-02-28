@@ -3,7 +3,7 @@ TERMS AND CONDITIONS
 
 Last Updated: [DATE]
 
-These Terms and Conditions ("Terms") govern the use of the mobile application "ParKar" ("Application"), developed by TurboDev ("Developer"). By using the Application, you accept these Terms.
+These Terms and Conditions ("Terms") govern the use of the mobile application "ParKar" ("Application"), developed by TurboMonguerDev ("Developer"). By using the Application, you accept these Terms.
 
 1. USE OF THE APPLICATION
 - The Application is provided **as is** and requires location services to function properly.

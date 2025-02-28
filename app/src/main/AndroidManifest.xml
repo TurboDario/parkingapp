@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.turbodev.parkar"
+    package="com.turbomonguerdev.parkar"
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Permisos necesarios para localización -->
@@ -52,8 +52,8 @@
             android:name=".widget.WidgetActionReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.turbodev.parkar.widget.ACTION_SAVE_LOCATION" />
-                <action android:name="com.turbodev.parkar.widget.ACTION_NAVIGATE" />
+                <action android:name="com.turbomonguerdev.parkar.widget.ACTION_SAVE_LOCATION" />
+                <action android:name="com.turbomonguerdev.parkar.widget.ACTION_NAVIGATE" />
             </intent-filter>
         </receiver>
 

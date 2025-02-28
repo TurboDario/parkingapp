@@ -1,4 +1,4 @@
-package com.turbodev.parkar.service
+package com.turbomonguerdev.parkar.service
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -14,12 +14,12 @@ import android.os.Looper
 import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
-import com.turbodev.parkar.R
-import com.turbodev.parkar.widget.ParKarWidgetProvider
+import com.turbomonguerdev.parkar.R
+import com.turbomonguerdev.parkar.widget.ParKarWidgetProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.turbodev.parkar.location.ParkingPreferences
+import com.turbomonguerdev.parkar.location.ParkingPreferences
 
 class LocationForegroundService : Service() {
 

@@ -1,4 +1,4 @@
-package com.turbodev.parkar.location
+package com.turbomonguerdev.parkar.location
 
 import android.content.Context
 import android.content.SharedPreferences

@@ -1,4 +1,4 @@
-package com.turbodev.parkar.location
+package com.turbomonguerdev.parkar.location
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,7 +10,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
-import com.turbodev.parkar.R
+import com.turbomonguerdev.parkar.R
 
 class LocationManager(private val context: Context) {
 

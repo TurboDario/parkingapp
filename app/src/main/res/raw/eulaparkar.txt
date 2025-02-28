@@ -3,7 +3,7 @@ END USER LICENSE AGREEMENT (EULA)
 
 Last Updated: [DATE]
 
-This End User License Agreement ("Agreement") is a legal agreement between you ("User") and TurboDev ("Developer"), governing the use of the mobile application "ParKar" ("Application").
+This End User License Agreement ("Agreement") is a legal agreement between you ("User") and TurboMonguerDev ("Developer"), governing the use of the mobile application "ParKar" ("Application").
 
 By installing, accessing, or using the Application, you agree to be bound by this Agreement. If you do not agree, do not install or use the Application.
 
