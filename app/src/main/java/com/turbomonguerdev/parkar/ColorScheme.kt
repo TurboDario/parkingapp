@@ -20,26 +20,27 @@ fun ParKarTheme(
         content = content
     )
 }
-// Define un ColorScheme para el modo claro
+
+// 🎨 Esquema de colores para el modo claro
 val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF2196F3), // Azul
-    onPrimary = Color(0xFFFFFFFF), // Blanco
-    secondary = Color(0xFFB2EBF2), // Cyan claro
-    onSecondary = Color(0xFF000000), // Negro
-    background = Color(0xFFFFFFFF), // Blanco
-    surface = Color(0xFFF0F0F0), // Gris claro
-    onBackground = Color(0xFF333333), // Gris oscuro
-    onSurface = Color(0xFF333333) // Gris oscuro
+    primary = Color(0xFF1565C0),  // Azul profundo pero cálido
+    onPrimary = Color.White,  // Texto en blanco sobre primary
+    secondary = Color(0xFF00ACC1),  // Azul verdoso relajante
+    onSecondary = Color.White,  // Texto en blanco sobre secondary
+    background = Color(0xFFE3F2FD),  // Azul clarito, relajante y confiable
+    surface = Color(0xFFBBDEFB),  // Azul pastel para destacar secciones
+    onBackground = Color(0xFF0D47A1),  // Azul oscuro para textos contrastados
+    onSurface = Color(0xFF102027)  // Azul grisáceo, elegante y profesional
 )
 
-// Define un ColorScheme para el modo oscuro
+// 🌙 Esquema de colores para el modo oscuro
 val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFF3F51B5), // Azul oscuro
-    onPrimary = Color(0xFFFFFFFF), // Blanco
-    secondary = Color(0xFF009688), // Verde azulado
-    onSecondary = Color(0xFFFFFFFF), // Blanco
-    background = Color(0xFF121212), // Negro casi puro
-    surface = Color(0xFF1E1E1E), // Gris muy oscuro
-    onBackground = Color(0xFFEEEEEE), // Gris claro
-    onSurface = Color(0xFFEEEEEE) // Gris claro
+    primary = Color(0xFF0D47A1),  // Azul marino profundo
+    onPrimary = Color.White,  // Texto en blanco sobre primary
+    secondary = Color(0xFF00838F),  // Verde azulado oscuro, transmite calma
+    onSecondary = Color.White,  // Texto en blanco sobre secondary
+    background = Color(0xFF0A192F),  // Azul oscuro grisáceo, relajante
+    surface = Color(0xFF1B2A41),  // Azul grisáceo más suave para destacar secciones
+    onBackground = Color(0xFFBBDEFB),  // Azul claro para contraste
+    onSurface = Color(0xFF90CAF9)  // Azul pastel, elegante y profesional
 )
