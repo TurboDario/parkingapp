@@ -15,6 +15,7 @@ plugins {
 }
 
 android {
+    ndkVersion = "25.2.9519653"
     namespace = "com.turbomonguerdev.parkar"
     compileSdk = 35
 
@@ -41,6 +42,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            ndk {
+                debugSymbolLevel = "full"
+            }
         }
     }
     compileOptions {
