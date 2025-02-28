@@ -21,26 +21,24 @@ fun ParKarTheme(
     )
 }
 
-// 🎨 Esquema de colores para el modo claro
 val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF1565C0),  // Azul profundo pero cálido
-    onPrimary = Color.White,  // Texto en blanco sobre primary
-    secondary = Color(0xFF00ACC1),  // Azul verdoso relajante
-    onSecondary = Color.White,  // Texto en blanco sobre secondary
-    background = Color(0xFFE3F2FD),  // Azul clarito, relajante y confiable
-    surface = Color(0xFFBBDEFB),  // Azul pastel para destacar secciones
-    onBackground = Color(0xFF0D47A1),  // Azul oscuro para textos contrastados
-    onSurface = Color(0xFF102027)  // Azul grisáceo, elegante y profesional
+    primary = Color(0xFF1565C0),
+    onPrimary = Color.White,
+    secondary = Color(0xFF00ACC1),
+    onSecondary = Color.White,
+    background = Color(0xFFE3F2FD),
+    surface = Color(0xFFBBDEFB),
+    onBackground = Color(0xFF0D47A1),
+    onSurface = Color(0xFF102027)
 )
 
-// 🌙 Esquema de colores para el modo oscuro
 val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFF0D47A1),  // Azul marino profundo
-    onPrimary = Color.White,  // Texto en blanco sobre primary
-    secondary = Color(0xFF00838F),  // Verde azulado oscuro, transmite calma
-    onSecondary = Color.White,  // Texto en blanco sobre secondary
-    background = Color(0xFF0A192F),  // Azul oscuro grisáceo, relajante
-    surface = Color(0xFF1B2A41),  // Azul grisáceo más suave para destacar secciones
-    onBackground = Color(0xFFBBDEFB),  // Azul claro para contraste
-    onSurface = Color(0xFF90CAF9)  // Azul pastel, elegante y profesional
+    primary = Color(0xFF0D47A1),
+    onPrimary = Color.White,
+    secondary = Color(0xFF00838F),
+    onSecondary = Color.White,
+    background = Color(0xFF0A192F),
+    surface = Color(0xFF1B2A41),
+    onBackground = Color(0xFFBBDEFB),
+    onSurface = Color(0xFF90CAF9)
 )
