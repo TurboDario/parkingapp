@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.navigation.runtime.android)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.datastore.core.android)
 
     // Testing
     testImplementation(libs.junit)
@@ -104,4 +105,7 @@ dependencies {
     // Maps
     implementation(libs.play.services.maps)
     implementation(libs.maps.compose)
+
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 }
