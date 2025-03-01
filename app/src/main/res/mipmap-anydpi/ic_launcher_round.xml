@@ -1,6 +1,46 @@
-<?xml version="1.0" encoding="utf-8"?>
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@drawable/ic_launcher_background" />
-    <foreground android:drawable="@drawable/ic_launcher_foreground" />
-    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+    <background>
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="#FFBBDEFB"/>
+                </shape>
+            </item>
+            <item>
+                <vector
+                    android:width="24dp"
+                    android:height="24dp"
+                    android:viewportWidth="24"
+                    android:viewportHeight="24">
+                    <group
+                        android:scaleX="0.5625"
+                        android:scaleY="0.5625"
+                        android:translateX="5.25"
+                        android:translateY="5.25">
+                        <path
+                            android:fillColor="#FF0D47A1"
+                            android:pathData="M12,2C8.13,2 5,5.13 5,9c0,5.25 7,13 7,13s7,-7.75 7,-13c0,-3.87 -3.13,-7 -7,-7z"/>
+                    </group>
+                </vector>
+            </item>
+        </layer-list>
+    </background>
+    <foreground>
+        <vector
+            android:width="24dp"
+            android:height="24dp"
+            android:viewportWidth="24"
+            android:viewportHeight="24">
+            <group
+                android:scaleX="0.225"
+                android:scaleY="0.225"
+                android:translateY="-2.25"
+                android:pivotX="12"
+                android:pivotY="12">
+                <path
+                    android:fillColor="#FFBBDEFB"
+                    android:pathData="M18.92,6.01C18.72,5.42 18.16,5 17.5,5h-11c-0.66,0 -1.21,0.42 -1.42,1.01L3,12v8c0,0.55 0.45,1 1,1h1c0,0.55 1,-0.45 1,-1v-1h12v1c0,0.55 0.45,1 1,1h1c0,0.55 1,-0.45 1,-1v-8l-2.08,-5.99zM6.5,16c-0.83,0 -1.5,-0.67 -1.5,-1.5S5.67,13 6.5,13s1.5,0.67 1.5,1.5S7.33,16 6.5,16zM17.5,16c-0.83,0 -1.5,-0.67 -1.5,-1.5s0.67,-1.5 1.5,-1.5 1.5,0.67 1.5,1.5 -0.67,1.5 -1.5,1.5zM5,11l1.5,-4.5h11L19,11L5,11z"/>
+            </group>
+        </vector>
+    </foreground>
 </adaptive-icon>

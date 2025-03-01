@@ -19,6 +19,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.turbomonguerdev.parkar.location.LocationManager
 import com.turbomonguerdev.parkar.ui.screens.AboutScreen
 import com.turbomonguerdev.parkar.ui.screens.HomeScreen
+import android.window.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
 class MainActivity : ComponentActivity() {
     private lateinit var locationManager: LocationManager
@@ -39,6 +41,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
         locationManager = LocationManager(this)
