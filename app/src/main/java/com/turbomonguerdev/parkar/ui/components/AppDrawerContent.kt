@@ -1,7 +1,12 @@
 package com.turbomonguerdev.parkar.ui.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
@@ -11,13 +16,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.turbomonguerdev.parkar.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppDrawerContent(
     themeState: MutableState<Boolean>,
     onThemeChange: (Boolean) -> Unit,
     onAboutClick: () -> Unit
 ) {
+    // We calculate a width so the drawer is half the screen, for example
     val drawerWidth = LocalConfiguration.current.screenWidthDp.dp * 0.5f
 
     ModalDrawerSheet(
@@ -27,7 +32,9 @@ fun AppDrawerContent(
             text = stringResource(R.string.menu),
             modifier = Modifier.padding(16.dp)
         )
+
         HorizontalDivider()
+
         NavigationDrawerItem(
             label = {
                 Row(
@@ -36,6 +43,7 @@ fun AppDrawerContent(
                 ) {
                     Text(stringResource(R.string.dark_mode))
                     Spacer(modifier = Modifier.weight(1f))
+                    // The switch controls the dark theme
                     Switch(
                         checked = themeState.value,
                         onCheckedChange = { isChecked -> onThemeChange(isChecked) },
@@ -47,8 +55,11 @@ fun AppDrawerContent(
             onClick = {},
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
         )
+
         Spacer(modifier = Modifier.weight(1f))
+
         HorizontalDivider()
+
         NavigationDrawerItem(
             label = { Text(stringResource(R.string.about)) },
             selected = false,

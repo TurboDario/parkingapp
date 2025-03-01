@@ -1,30 +1,14 @@
-package com.turbomonguerdev.parkar
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+
+package com.turbomonguerdev.parkar.screens
 
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,7 +24,6 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.turbomonguerdev.parkar.R
 
-@androidx.compose.material3.ExperimentalMaterial3Api
 @Composable
 fun ManualLocationScreen(
     initialLocation: LatLng?,
@@ -50,8 +33,17 @@ fun ManualLocationScreen(
     val context = LocalContext.current
     var selectedLocation by remember { mutableStateOf(initialLocation) }
     val cameraPositionState = rememberCameraPositionState()
-    val uiSettings = remember { MapUiSettings(zoomControlsEnabled = true, myLocationButtonEnabled = true) }
-    val properties = remember { MapProperties(isMyLocationEnabled = true) }
+    val uiSettings = remember {
+        MapUiSettings(
+            zoomControlsEnabled = true,
+            myLocationButtonEnabled = true
+        )
+    }
+    val properties = remember {
+        MapProperties(
+            isMyLocationEnabled = true
+        )
+    }
 
     LaunchedEffect(selectedLocation) {
         if (selectedLocation == null) {
@@ -69,6 +61,7 @@ fun ManualLocationScreen(
     }
 
     LaunchedEffect(cameraPositionState.isMoving) {
+        // When the map stops moving, update the selected location
         if (!cameraPositionState.isMoving) {
             selectedLocation = cameraPositionState.position.target
         }
@@ -84,7 +77,9 @@ fun ManualLocationScreen(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
             )
         }
     ) { innerPadding ->
@@ -117,7 +112,7 @@ fun ManualLocationScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -142,9 +137,11 @@ fun ManualLocationScreen(
 }
 
 private fun fetchLastKnownLocation(context: Context, callback: (LatLng?) -> Unit) {
-    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) ==
-        PackageManager.PERMISSION_GRANTED) {
-
+    val permissionGranted = (
+            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                    PackageManager.PERMISSION_GRANTED
+            )
+    if (permissionGranted) {
         LocationServices.getFusedLocationProviderClient(context).lastLocation
             .addOnSuccessListener { location ->
                 callback(location?.let { LatLng(it.latitude, it.longitude) })

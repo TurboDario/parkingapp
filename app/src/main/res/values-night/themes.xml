@@ -1,6 +1,7 @@
-<!-- res/values-night/themes.xml -->
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.ParKar.Dark" parent="Theme.ParKar">
+    <!-- Base App Theme for Dark mode -->
+    <style name="Theme.ParKar" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/dark_primary</item>
         <item name="colorPrimaryVariant">@color/dark_primary_variant</item>
         <item name="colorOnPrimary">@color/dark_on_primary</item>
@@ -14,10 +15,11 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
-    <style name="Theme.ParKar.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/dark_background</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/dark_splash_icon</item>
-        <item name="windowSplashScreenAnimationDuration">1000</item>
-        <item name="postSplashScreenTheme">@style/Theme.ParKar</item>
+
+    <!-- Splash Theme for Dark mode -->
+    <style name="Theme.ParKar.Splash.Dark" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowSplashScreenBackground">@color/dark_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/dark_splash_icon</item>
+        <item name="android:windowSplashScreenAnimationDuration">1000</item>
     </style>
 </resources>

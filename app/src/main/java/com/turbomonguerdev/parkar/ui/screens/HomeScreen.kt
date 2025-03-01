@@ -10,8 +10,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +36,7 @@ fun HomeScreen(
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
+            // Drawer content uses the same theme state and callback
             AppDrawerContent(
                 themeState = themeState,
                 onThemeChange = onThemeChange,
@@ -156,29 +155,28 @@ fun SmallActionButton(onClick: () -> Unit, iconRes: Int, contentDescription: Str
     Button(
         onClick = onClick,
         modifier = Modifier
-            .size(52.dp) // Tamaño total del botón
+            .size(52.dp)
             .shadow(8.dp, shape = MaterialTheme.shapes.large),
         shape = MaterialTheme.shapes.large,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
         ),
-        contentPadding = PaddingValues(0.dp) // Evita el padding interno del botón
+        contentPadding = PaddingValues(0.dp)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize(), // Hace que el icono use todo el espacio disponible
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(id = iconRes),
                 contentDescription = contentDescription,
                 tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.size(28.dp) // Ajusta este valor según lo grande que quieras el icono
+                modifier = Modifier.size(28.dp)
             )
         }
     }
 }
-
 
 @Composable
 fun NavigateButton(onClick: () -> Unit) {
