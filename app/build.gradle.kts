@@ -93,6 +93,7 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.navigation.runtime.android)
+    implementation(libs.androidx.core.splashscreen)
 
     // Testing
     testImplementation(libs.junit)

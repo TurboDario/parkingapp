@@ -98,14 +98,14 @@ fun HomeScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             SmallActionButton(
-                                onClick = onManualLocationClick,
-                                iconRes = R.drawable.ic_edit_location,
-                                contentDescription = stringResource(R.string.edit_parking)
-                            )
-                            SmallActionButton(
                                 onClick = onShareLocation,
                                 iconRes = R.drawable.ic_share_location,
                                 contentDescription = stringResource(R.string.share_location)
+                            )
+                            SmallActionButton(
+                                onClick = onManualLocationClick,
+                                iconRes = R.drawable.ic_edit_location,
+                                contentDescription = stringResource(R.string.edit_parking)
                             )
                         }
                     }
@@ -156,22 +156,29 @@ fun SmallActionButton(onClick: () -> Unit, iconRes: Int, contentDescription: Str
     Button(
         onClick = onClick,
         modifier = Modifier
-            .size(64.dp)
+            .size(52.dp) // Tamaño total del botón
             .shadow(8.dp, shape = MaterialTheme.shapes.large),
         shape = MaterialTheme.shapes.large,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
-        )
+        ),
+        contentPadding = PaddingValues(0.dp) // Evita el padding interno del botón
     ) {
-        Icon(
-            painter = painterResource(id = iconRes),
-            contentDescription = contentDescription,
-            tint = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.size(32.dp)
-        )
+        Box(
+            modifier = Modifier.fillMaxSize(), // Hace que el icono use todo el espacio disponible
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(id = iconRes),
+                contentDescription = contentDescription,
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(28.dp) // Ajusta este valor según lo grande que quieras el icono
+            )
+        }
     }
 }
+
 
 @Composable
 fun NavigateButton(onClick: () -> Unit) {
