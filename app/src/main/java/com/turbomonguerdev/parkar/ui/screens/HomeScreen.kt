@@ -25,10 +25,13 @@ fun HomeScreen(
     onSaveParkingLocation: () -> Unit,
     onNavigateToCar: () -> Unit,
     onShareLocation: () -> Unit,
-    onManualLocationClick: () -> Unit = {},
+    onManualLocationClick: () -> Unit,
     themeState: MutableState<Boolean>,
     onThemeChange: (Boolean) -> Unit,
-    onAboutClick: () -> Unit
+    onAboutClick: () -> Unit,
+    currentLanguage: String,
+    supportedLanguages: List<Pair<String, String>>,
+    onLanguageChange: (String) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -40,6 +43,9 @@ fun HomeScreen(
             AppDrawerContent(
                 themeState = themeState,
                 onThemeChange = onThemeChange,
+                currentLanguage = currentLanguage,
+                supportedLanguages = supportedLanguages,
+                onLanguageChange = onLanguageChange,
                 onAboutClick = onAboutClick
             )
         }

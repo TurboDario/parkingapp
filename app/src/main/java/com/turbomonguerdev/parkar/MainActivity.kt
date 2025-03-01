@@ -5,8 +5,10 @@ package com.turbomonguerdev.parkar
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Bundle
-import android.window.SplashScreen
+import android.os.LocaleList
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -22,9 +24,21 @@ import com.turbomonguerdev.parkar.location.LocationManager
 import com.turbomonguerdev.parkar.screens.ManualLocationScreen
 import com.turbomonguerdev.parkar.ui.screens.AboutScreen
 import com.turbomonguerdev.parkar.ui.screens.HomeScreen
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
+    private var currentLanguage by mutableStateOf("system")
+    private val supportedLanguages = listOf(
+        "system" to "System default",
+        "en" to "English",
+        "es" to "Spanish",
+        "fr" to "French",
+        "de" to "German",
+        "it" to "Italian",
+        "ja" to "Japanese",
+        "ru" to "Russian"
+    )
     private lateinit var locationManager: LocationManager
     private var currentLocation by mutableStateOf<LatLng?>(null)
     private var currentScreen by mutableStateOf(Screen.HOME)
@@ -43,32 +57,28 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Read user preference (or system default) for dark theme
+        val langPrefs = getSharedPreferences("lang_prefs", Context.MODE_PRIVATE)
+        currentLanguage = langPrefs.getString("app_lang", "system") ?: "system"
+        setAppLocale(currentLanguage)
+
         val sharedPrefs = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
-        val nightModeFlags = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
-        val isSystemDarkTheme = (nightModeFlags == android.content.res.Configuration.UI_MODE_NIGHT_YES)
+        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val isSystemDarkTheme = (nightModeFlags == Configuration.UI_MODE_NIGHT_YES)
         val savedDarkTheme = sharedPrefs.getBoolean("dark_theme", isSystemDarkTheme)
 
-        // Choose the splash theme (light/dark) before super.onCreate
         if (savedDarkTheme) {
-            // Modo oscuro -> usa el splash definido en Theme.ParKar.Splash.Dark
             setTheme(R.style.Theme_ParKar_Splash_Dark)
         } else {
-            // Modo claro -> usa el splash definido en Theme.ParKar.Splash.Light
             setTheme(R.style.Theme_ParKar_Splash_Light)
         }
 
-        // Install the new splash screen API
-        val splashScreen: androidx.core.splashscreen.SplashScreen = installSplashScreen()
-
+        installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        // Initialize location manager, check permissions, etc.
         locationManager = LocationManager(this)
         checkLocationPermissions()
         enableEdgeToEdge()
 
-        // We'll use this state to toggle the theme in Composables
         val mainThemeState = mutableStateOf(savedDarkTheme)
 
         setContent {
@@ -86,11 +96,34 @@ class MainActivity : ComponentActivity() {
                             sharedPrefs.edit().putBoolean("dark_theme", newValue).apply()
                         },
                         onSaveLocation = { saveLocation(it) },
-                        onScreenChange = { currentScreen = it }
+                        onScreenChange = { currentScreen = it },
+                        currentLanguage = currentLanguage,  // 🔥 FIX: Pass the language
+                        supportedLanguages = supportedLanguages,  // 🔥 FIX: Pass the supported languages
+                        onLanguageChange = { changeAppLanguage(it) }  // 🔥 FIX: Pass the language change function
                     )
                 }
             }
         }
+    }
+
+    private fun setAppLocale(languageCode: String) {
+        val config = Configuration(resources.configuration)
+        val locale = when (languageCode) {
+            "system" -> Resources.getSystem().configuration.locales[0]
+            else -> Locale(languageCode)
+        }
+
+        Locale.setDefault(locale)
+        config.setLocales(LocaleList(locale))
+        resources.updateConfiguration(config, resources.displayMetrics)
+    }
+
+    private fun changeAppLanguage(languageCode: String) {
+        getSharedPreferences("lang_prefs", Context.MODE_PRIVATE)
+            .edit()
+            .putString("app_lang", languageCode)
+            .apply()
+        recreate()
     }
 
     @Composable
@@ -100,7 +133,10 @@ class MainActivity : ComponentActivity() {
         themeState: MutableState<Boolean>,
         onThemeChange: (Boolean) -> Unit,
         onSaveLocation: (LatLng) -> Unit,
-        onScreenChange: (Screen) -> Unit
+        onScreenChange: (Screen) -> Unit,
+        currentLanguage: String,
+        supportedLanguages: List<Pair<String, String>>,
+        onLanguageChange: (String) -> Unit
     ) {
         when (currentScreen) {
             Screen.HOME -> HomeScreen(
@@ -110,7 +146,10 @@ class MainActivity : ComponentActivity() {
                 onShareLocation = { locationManager.shareCurrentLocation() },
                 themeState = themeState,
                 onThemeChange = onThemeChange,
-                onAboutClick = { onScreenChange(Screen.ABOUT) }
+                onAboutClick = { onScreenChange(Screen.ABOUT) },
+                currentLanguage = currentLanguage,
+                supportedLanguages = supportedLanguages,
+                onLanguageChange = onLanguageChange
             )
             Screen.MANUAL_LOCATION -> ManualLocationScreen(
                 initialLocation = currentLocation,

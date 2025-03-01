@@ -2,7 +2,10 @@ package com.turbomonguerdev.parkar.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Switch
@@ -12,6 +15,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.turbomonguerdev.parkar.R
@@ -20,14 +24,17 @@ import com.turbomonguerdev.parkar.R
 fun AppDrawerContent(
     themeState: MutableState<Boolean>,
     onThemeChange: (Boolean) -> Unit,
+    currentLanguage: String,
+    supportedLanguages: List<Pair<String, String>>,
+    onLanguageChange: (String) -> Unit,
     onAboutClick: () -> Unit
 ) {
-    // We calculate a width so the drawer is half the screen, for example
     val drawerWidth = LocalConfiguration.current.screenWidthDp.dp * 0.5f
 
     ModalDrawerSheet(
         modifier = Modifier.width(drawerWidth)
     ) {
+        // Contenido del drawer
         Text(
             text = stringResource(R.string.menu),
             modifier = Modifier.padding(16.dp)
@@ -35,6 +42,7 @@ fun AppDrawerContent(
 
         HorizontalDivider()
 
+        // Dark Mode
         NavigationDrawerItem(
             label = {
                 Row(
@@ -43,10 +51,9 @@ fun AppDrawerContent(
                 ) {
                     Text(stringResource(R.string.dark_mode))
                     Spacer(modifier = Modifier.weight(1f))
-                    // The switch controls the dark theme
                     Switch(
                         checked = themeState.value,
-                        onCheckedChange = { isChecked -> onThemeChange(isChecked) },
+                        onCheckedChange = { onThemeChange(it) },
                         modifier = Modifier.padding(start = 25.dp)
                     )
                 }
@@ -56,10 +63,37 @@ fun AppDrawerContent(
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
         )
 
+        HorizontalDivider()
+
+        // Selección de idioma
+        Text(
+            text = stringResource(R.string.select_language),
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.padding(start = 16.dp, top = 8.dp)
+        )
+
+        supportedLanguages.forEach { (code, name) ->
+            NavigationDrawerItem(
+                label = { Text(name) },
+                selected = code == currentLanguage,
+                onClick = { onLanguageChange(code) },
+                modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+                badge = {
+                    if (code == currentLanguage) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_check),
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
+        }
+
         Spacer(modifier = Modifier.weight(1f))
 
         HorizontalDivider()
 
+        // About
         NavigationDrawerItem(
             label = { Text(stringResource(R.string.about)) },
             selected = false,
