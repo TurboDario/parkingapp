@@ -57,6 +57,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val langPrefs = getSharedPreferences("lang_prefs", Context.MODE_PRIVATE)
         currentLanguage = langPrefs.getString("app_lang", "system") ?: "system"
+        // Update the locale with the saved language
+        updateLocale(currentLanguage)
 
         val sharedPrefs = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
         val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
