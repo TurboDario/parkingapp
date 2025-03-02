@@ -32,8 +32,8 @@
     <string name="share_location">Compartir ubicación</string>
 
     <!-- Language  -->
-    <string name="language">Language</string>
-    <string name="select_language">Select language</string>
+    <string name="language">Idioma</string>
+    <string name="select_language">Seleccionar idioma</string>
     <string name="system_default">System default</string>
     <string name="language_name_en">Inglés</string>
     <string name="language_name_es">Español</string>

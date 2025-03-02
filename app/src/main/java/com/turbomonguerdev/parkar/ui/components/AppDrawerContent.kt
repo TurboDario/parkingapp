@@ -30,7 +30,7 @@ fun AppDrawerContent(
     onSelectLanguageClick: () -> Unit,
     onAboutClick: () -> Unit
 ) {
-    val drawerWidth = LocalConfiguration.current.screenWidthDp.dp * 0.5f
+    val drawerWidth = LocalConfiguration.current.screenWidthDp.dp * 0.6f
 
     ModalDrawerSheet(
         modifier = Modifier.width(drawerWidth)
@@ -53,7 +53,7 @@ fun AppDrawerContent(
                     Switch(
                         checked = themeState.value,
                         onCheckedChange = { onThemeChange(it) },
-                        modifier = Modifier.padding(start = 25.dp)
+                        modifier = Modifier.padding(start = 35.dp)
                     )
                 }
             },
@@ -65,7 +65,7 @@ fun AppDrawerContent(
         HorizontalDivider()
 
         NavigationDrawerItem(
-            label = { Text("Select Language") },
+            label = { Text(stringResource(R.string.select_language)) },
             selected = false,
             onClick = onSelectLanguageClick,
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
