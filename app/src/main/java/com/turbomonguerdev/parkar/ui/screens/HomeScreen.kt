@@ -1,12 +1,11 @@
 package com.turbomonguerdev.parkar.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -36,16 +35,16 @@ fun HomeScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    var showLanguageDialog by remember { mutableStateOf(false) }
+    var selectedLanguage by remember { mutableStateOf(currentLanguage) }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            // Drawer content uses the same theme state and callback
             AppDrawerContent(
                 themeState = themeState,
                 onThemeChange = onThemeChange,
-                currentLanguage = currentLanguage,
-                supportedLanguages = supportedLanguages,
-                onLanguageChange = onLanguageChange,
+                onSelectLanguageClick = { showLanguageDialog = true },
                 onAboutClick = onAboutClick
             )
         }
@@ -118,6 +117,52 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     NavigateButton(onClick = onNavigateToCar)
+                }
+
+                if (showLanguageDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showLanguageDialog = false },
+                        title = { Text("Select Language") },
+                        text = {
+                            Column {
+                                supportedLanguages.forEach { (code, name) ->
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 4.dp)
+                                            .clickable {
+                                                selectedLanguage = code
+                                            }
+                                    ) {
+                                        RadioButton(
+                                            selected = code == selectedLanguage,
+                                            onClick = { selectedLanguage = code }
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(name)
+                                    }
+                                }
+                            }
+                        },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    onLanguageChange(selectedLanguage)
+                                    showLanguageDialog = false
+                                }
+                            ) {
+                                Text("OK")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(
+                                onClick = { showLanguageDialog = false }
+                            ) {
+                                Text("Cancel")
+                            }
+                        }
+                    )
                 }
             }
         )

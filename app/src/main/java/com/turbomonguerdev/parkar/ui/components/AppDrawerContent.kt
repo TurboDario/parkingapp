@@ -1,11 +1,14 @@
 package com.turbomonguerdev.parkar.ui.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Switch
@@ -24,9 +27,7 @@ import com.turbomonguerdev.parkar.R
 fun AppDrawerContent(
     themeState: MutableState<Boolean>,
     onThemeChange: (Boolean) -> Unit,
-    currentLanguage: String,
-    supportedLanguages: List<Pair<String, String>>,
-    onLanguageChange: (String) -> Unit,
+    onSelectLanguageClick: () -> Unit,
     onAboutClick: () -> Unit
 ) {
     val drawerWidth = LocalConfiguration.current.screenWidthDp.dp * 0.5f
@@ -34,7 +35,6 @@ fun AppDrawerContent(
     ModalDrawerSheet(
         modifier = Modifier.width(drawerWidth)
     ) {
-        // Contenido del drawer
         Text(
             text = stringResource(R.string.menu),
             modifier = Modifier.padding(16.dp)
@@ -42,7 +42,6 @@ fun AppDrawerContent(
 
         HorizontalDivider()
 
-        // Dark Mode
         NavigationDrawerItem(
             label = {
                 Row(
@@ -65,35 +64,17 @@ fun AppDrawerContent(
 
         HorizontalDivider()
 
-        // Selección de idioma
-        Text(
-            text = stringResource(R.string.select_language),
-            style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.padding(start = 16.dp, top = 8.dp)
+        NavigationDrawerItem(
+            label = { Text("Select Language") },
+            selected = false,
+            onClick = onSelectLanguageClick,
+            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
         )
-
-        supportedLanguages.forEach { (code, name) ->
-            NavigationDrawerItem(
-                label = { Text(name) },
-                selected = code == currentLanguage,
-                onClick = { onLanguageChange(code) },
-                modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-                badge = {
-                    if (code == currentLanguage) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_check),
-                            contentDescription = null
-                        )
-                    }
-                }
-            )
-        }
 
         Spacer(modifier = Modifier.weight(1f))
 
         HorizontalDivider()
 
-        // About
         NavigationDrawerItem(
             label = { Text(stringResource(R.string.about)) },
             selected = false,

@@ -6,9 +6,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Bundle
-import android.os.LocaleList
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -59,7 +57,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val langPrefs = getSharedPreferences("lang_prefs", Context.MODE_PRIVATE)
         currentLanguage = langPrefs.getString("app_lang", "system") ?: "system"
-        setAppLocale(currentLanguage)
 
         val sharedPrefs = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
         val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
@@ -97,33 +94,42 @@ class MainActivity : ComponentActivity() {
                         },
                         onSaveLocation = { saveLocation(it) },
                         onScreenChange = { currentScreen = it },
-                        currentLanguage = currentLanguage,  // 🔥 FIX: Pass the language
-                        supportedLanguages = supportedLanguages,  // 🔥 FIX: Pass the supported languages
-                        onLanguageChange = { changeAppLanguage(it) }  // 🔥 FIX: Pass the language change function
+                        currentLanguage = currentLanguage,
+                        supportedLanguages = supportedLanguages,
+                        onLanguageChange = { changeAppLanguage(it) }
                     )
                 }
             }
         }
     }
 
-    private fun setAppLocale(languageCode: String) {
-        val config = Configuration(resources.configuration)
-        val locale = when (languageCode) {
-            "system" -> Resources.getSystem().configuration.locales[0]
-            else -> Locale(languageCode)
-        }
-
-        Locale.setDefault(locale)
-        config.setLocales(LocaleList(locale))
-        resources.updateConfiguration(config, resources.displayMetrics)
-    }
-
     private fun changeAppLanguage(languageCode: String) {
+        currentLanguage = languageCode
         getSharedPreferences("lang_prefs", Context.MODE_PRIVATE)
             .edit()
             .putString("app_lang", languageCode)
             .apply()
+        updateLocale(languageCode)
         recreate()
+    }
+
+    private fun updateLocale(languageCode: String) {
+        val locale = if (languageCode == "system") {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                resources.configuration.locales.get(0)
+            } else {
+                resources.configuration.locale
+            }
+        } else {
+            Locale(languageCode)
+        }
+        Locale.setDefault(locale)
+        val config = resources.configuration
+        config.setLocale(locale)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            createConfigurationContext(config)
+        }
+        resources.updateConfiguration(config, resources.displayMetrics)
     }
 
     @Composable
