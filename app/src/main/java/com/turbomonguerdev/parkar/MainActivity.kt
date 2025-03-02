@@ -16,7 +16,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.android.gms.maps.model.LatLng
 import com.turbomonguerdev.parkar.location.LocationManager
 import com.turbomonguerdev.parkar.screens.ManualLocationScreen
@@ -65,13 +64,6 @@ class MainActivity : ComponentActivity() {
         val isSystemDarkTheme = (nightModeFlags == Configuration.UI_MODE_NIGHT_YES)
         val savedDarkTheme = sharedPrefs.getBoolean("dark_theme", isSystemDarkTheme)
 
-        if (savedDarkTheme) {
-            setTheme(R.style.Theme_ParKar_Splash_Dark)
-        } else {
-            setTheme(R.style.Theme_ParKar_Splash_Light)
-        }
-
-        installSplashScreen()
         super.onCreate(savedInstanceState)
 
         locationManager = LocationManager(this)
