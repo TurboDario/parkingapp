@@ -5,25 +5,25 @@
     <color name="dark_gray_text">#333333</color>
     <color name="light_gray_text">#EEEEEE</color>
 
-    <color name="light_primary">#2196F3</color>
+    <color name="light_primary">#1565C0</color>
     <color name="light_primary_variant">#1976D2</color>
     <color name="light_on_primary">#FFFFFF</color>
-    <color name="light_secondary">#B2EBF2</color>
+    <color name="light_secondary">#00ACC1</color>
     <color name="light_secondary_variant">#80CBC4</color>
-    <color name="light_on_secondary">#000000</color>
-    <color name="light_background">#FFFFFF</color>
-    <color name="light_surface">#F0F0F0</color>
-    <color name="light_on_background">#333333</color>
-    <color name="light_on_surface">#333333</color>
+    <color name="light_on_secondary">#FFFFFF</color>
+    <color name="light_background">#E3F2FD</color>
+    <color name="light_surface">#BBDEFB</color>
+    <color name="light_on_background">#0D47A1</color>
+    <color name="light_on_surface">#102027</color>
 
-    <color name="dark_primary">#3F51B5</color>
+    <color name="dark_primary">#0D47A1</color>
     <color name="dark_primary_variant">#303F9F</color>
     <color name="dark_on_primary">#FFFFFF</color>
-    <color name="dark_secondary">#009688</color>
+    <color name="dark_secondary">#00838F</color>
     <color name="dark_secondary_variant">#00796B</color>
     <color name="dark_on_secondary">#FFFFFF</color>
-    <color name="dark_background">#121212</color>
-    <color name="dark_surface">#1E1E1E</color>
-    <color name="dark_on_background">#EEEEEE</color>
-    <color name="dark_on_surface">#EEEEEE</color>
+    <color name="dark_background">#0A192F</color>
+    <color name="dark_surface">#1B2A41</color>
+    <color name="dark_on_background">#BBDEFB</color>
+    <color name="dark_on_surface">#90CAF9</color>
 </resources>

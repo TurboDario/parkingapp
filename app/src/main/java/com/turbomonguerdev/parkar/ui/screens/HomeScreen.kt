@@ -1,17 +1,14 @@
 package com.turbomonguerdev.parkar.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -27,13 +24,19 @@ fun HomeScreen(
     onSaveParkingLocation: () -> Unit,
     onNavigateToCar: () -> Unit,
     onShareLocation: () -> Unit,
-    onManualLocationClick: () -> Unit = {},
+    onManualLocationClick: () -> Unit,
     themeState: MutableState<Boolean>,
     onThemeChange: (Boolean) -> Unit,
-    onAboutClick: () -> Unit
+    onAboutClick: () -> Unit,
+    currentLanguage: String,
+    supportedLanguages: List<Pair<String, String>>,
+    onLanguageChange: (String) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    var showLanguageDialog by remember { mutableStateOf(false) }
+    var selectedLanguage by remember { mutableStateOf(currentLanguage) }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -41,6 +44,7 @@ fun HomeScreen(
             AppDrawerContent(
                 themeState = themeState,
                 onThemeChange = onThemeChange,
+                onSelectLanguageClick = { showLanguageDialog = true },
                 onAboutClick = onAboutClick
             )
         }
@@ -114,6 +118,52 @@ fun HomeScreen(
 
                     NavigateButton(onClick = onNavigateToCar)
                 }
+
+                if (showLanguageDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showLanguageDialog = false },
+                        title = { Text("Select Language") },
+                        text = {
+                            Column {
+                                supportedLanguages.forEach { (code, name) ->
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 4.dp)
+                                            .clickable {
+                                                selectedLanguage = code
+                                            }
+                                    ) {
+                                        RadioButton(
+                                            selected = code == selectedLanguage,
+                                            onClick = { selectedLanguage = code }
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(name)
+                                    }
+                                }
+                            }
+                        },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    onLanguageChange(selectedLanguage)
+                                    showLanguageDialog = false
+                                }
+                            ) {
+                                Text("OK")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(
+                                onClick = { showLanguageDialog = false }
+                            ) {
+                                Text("Cancel")
+                            }
+                        }
+                    )
+                }
             }
         )
     }
@@ -156,29 +206,28 @@ fun SmallActionButton(onClick: () -> Unit, iconRes: Int, contentDescription: Str
     Button(
         onClick = onClick,
         modifier = Modifier
-            .size(52.dp) // Tamaño total del botón
+            .size(52.dp)
             .shadow(8.dp, shape = MaterialTheme.shapes.large),
         shape = MaterialTheme.shapes.large,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
         ),
-        contentPadding = PaddingValues(0.dp) // Evita el padding interno del botón
+        contentPadding = PaddingValues(0.dp)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize(), // Hace que el icono use todo el espacio disponible
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(id = iconRes),
                 contentDescription = contentDescription,
                 tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.size(28.dp) // Ajusta este valor según lo grande que quieras el icono
+                modifier = Modifier.size(28.dp)
             )
         }
     }
 }
-
 
 @Composable
 fun NavigateButton(onClick: () -> Unit) {

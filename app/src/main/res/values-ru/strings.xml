@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ParKar</string>
+    <string name="widget_description">Быстро сохраните и найдите свой автомобиль</string>
+    <string name="parking_location_saved">Местоположение парковки сохранено</string>
+    <string name="unable_to_get_location">Не удалось получить местоположение</string>
+    <string name="error_getting_location">Ошибка получения местоположения</string>
+    <string name="error_unexpected">Неожиданная ошибка: %1$s</string>
+    <string name="notification_title">Получение местоположения</string>
+    <string name="notification_text">Пожалуйста, подождите...</string>
+    <string name="location_service_channel_name">Служба определения местоположения</string>
+    <string name="location_permission_required">Требуются разрешения на доступ к местоположению. Сначала откройте приложение.</string>
+    <string name="no_saved_location">Нет сохраненного местоположения. Сначала сохраните местоположение.</string>
+    <string name="menu">Меню</string>
+    <string name="dark_mode">Темный режим</string>
+    <string name="save_parking">ParKar</string>
+    <string name="save_parking_location">Сохранить местоположение парковки</string>
+    <string name="edit_parking">Редактировать местоположение</string>
+    <string name="navigate_to_car">Навигация к автомобилю</string>
+    <string name="select_manual_location">Выбрать местоположение вручную</string>
+    <string name="central_location">Центральное местоположение</string>
+    <string name="save_selected_location">Сохранить выбранное местоположение</string>
+    <string name="cancel">Отмена</string>
+    <string name="about">О приложении</string>
+    <string name="back">Назад</string>
+    <string name="version">Версия: %1$s</string>
+    <string name="developer_name">Разработано TurboMonguerDev</string>
+    <string name="eula">EULA</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
+    <string name="terms_and_conditions">Условия и положения</string>
+    <string name="contact_support">Связаться с поддержкой</string>
+    <string name="rate_us">Оцените нас в Google Play</string>
+    <string name="share_location">Поделиться местоположением</string>
+
+    <!-- Language -->
+    <string name="language">Язык</string>
+    <string name="select_language">Выберите язык</string>
+    <string name="system_default">Системный по умолчанию</string>
+    <string name="language_name_en">Английский</string>
+    <string name="language_name_es">Испанский</string>
+    <string name="language_name_fr">Французский</string>
+    <string name="language_name_de">Немецкий</string>
+    <string name="language_name_it">Итальянский</string>
+    <string name="language_name_ja">Японский</string>
+    <string name="language_name_ru">Русский</string>
+</resources>

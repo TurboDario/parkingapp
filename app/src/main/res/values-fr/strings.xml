@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ParKar</string>
+    <string name="widget_description">Enregistrez et retrouvez rapidement votre voiture</string>
+    <string name="parking_location_saved">Emplacement de parking enregistré</string>
+    <string name="unable_to_get_location">Impossible d\'obtenir la localisation</string>
+    <string name="error_getting_location">Erreur lors de la récupération de la localisation</string>
+    <string name="error_unexpected">Erreur inattendue : %1$s</string>
+    <string name="notification_title">Obtention de la localisation</string>
+    <string name="notification_text">Veuillez patienter…</string>
+    <string name="location_service_channel_name">Service de localisation</string>
+    <string name="location_permission_required">Les permissions de localisation sont requises. Ouvrez dl\'abord ll\'application.</string>
+    <string name="no_saved_location">Aucun emplacement enregistré. Enregistrez l\'emplacement dl\'abord.</string>
+    <string name="menu">Menu</string>
+    <string name="dark_mode">Mode Sombre</string>
+    <string name="save_parking">ParKar</string>
+    <string name="save_parking_location">Enregistrer l\'emplacement de parking</string>
+    <string name="edit_parking">Modifier l\'emplacement</string>
+    <string name="navigate_to_car">Naviguer jusqu\'à la voiture</string>
+    <string name="select_manual_location">Sélectionner un emplacement manuel</string>
+    <string name="central_location">Emplacement central</string>
+    <string name="save_selected_location">Enregistrer l\'emplacement sélectionné</string>
+    <string name="cancel">Annuler</string>
+    <string name="about">À propos</string>
+    <string name="back">Retour</string>
+    <string name="version">Version : %1$s</string>
+    <string name="developer_name">Développé par TurboMonguerDev</string>
+    <string name="eula">EULA</string>
+    <string name="privacy_policy">Politique de Confidentialité</string>
+    <string name="terms_and_conditions">Termes et Conditions</string>
+    <string name="contact_support">Contacter le Support</string>
+    <string name="rate_us">Évaluez-nous sur Google Play</string>
+    <string name="share_location">Partager l\'emplacement</string>
+
+    <!-- Language -->
+    <string name="language">Langue</string>
+    <string name="select_language">Sélectionner la langue</string>
+    <string name="system_default">Défaut du système</string>
+    <string name="language_name_en">Anglais</string>
+    <string name="language_name_es">Espagnol</string>
+    <string name="language_name_fr">Français</string>
+    <string name="language_name_de">Allemand</string>
+    <string name="language_name_it">Italien</string>
+    <string name="language_name_ja">Japonais</string>
+    <string name="language_name_ru">Russe</string>
+</resources>

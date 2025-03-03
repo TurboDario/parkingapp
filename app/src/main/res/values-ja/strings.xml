@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ParKar</string>
+    <string name="widget_description">車を素早く保存して見つける</string>
+    <string name="parking_location_saved">駐車位置が保存されました</string>
+    <string name="unable_to_get_location">位置情報を取得できませんでした</string>
+    <string name="error_getting_location">位置情報の取得エラー</string>
+    <string name="error_unexpected">予期しないエラー: %1$s</string>
+    <string name="notification_title">位置情報を取得中</string>
+    <string name="notification_text">しばらくお待ちください…</string>
+    <string name="location_service_channel_name">位置情報サービス</string>
+    <string name="location_permission_required">位置情報の権限が必要です。まずアプリを開いてください。</string>
+    <string name="no_saved_location">保存された位置がありません。まず位置を保存してください。</string>
+    <string name="menu">メニュー</string>
+    <string name="dark_mode">ダークモード</string>
+    <string name="save_parking">ParKar</string>
+    <string name="save_parking_location">駐車位置を保存</string>
+    <string name="edit_parking">位置を編集</string>
+    <string name="navigate_to_car">車までのナビ</string>
+    <string name="select_manual_location">手動で位置を選択</string>
+    <string name="central_location">中央の位置</string>
+    <string name="save_selected_location">選択した位置を保存</string>
+    <string name="cancel">キャンセル</string>
+    <string name="about">アプリについて</string>
+    <string name="back">戻る</string>
+    <string name="version">バージョン: %1$s</string>
+    <string name="developer_name">TurboMonguerDev により開発</string>
+    <string name="eula">EULA</string>
+    <string name="privacy_policy">プライバシーポリシー</string>
+    <string name="terms_and_conditions">利用規約</string>
+    <string name="contact_support">サポートに連絡</string>
+    <string name="rate_us">Google Play で評価する</string>
+    <string name="share_location">位置情報を共有</string>
+
+    <!-- Language -->
+    <string name="language">言語</string>
+    <string name="select_language">言語を選択</string>
+    <string name="system_default">システムデフォルト</string>
+    <string name="language_name_en">英語</string>
+    <string name="language_name_es">スペイン語</string>
+    <string name="language_name_fr">フランス語</string>
+    <string name="language_name_de">ドイツ語</string>
+    <string name="language_name_it">イタリア語</string>
+    <string name="language_name_ja">日本語</string>
+    <string name="language_name_ru">ロシア語</string>
+</resources>

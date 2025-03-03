@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ParKar</string>
+    <string name="widget_description">Salva e trova rapidamente la tua auto</string>
+    <string name="parking_location_saved">Posizione del parcheggio salvata</string>
+    <string name="unable_to_get_location">Impossibile ottenere la posizione</string>
+    <string name="error_getting_location">Errore nel recuperare la posizione</string>
+    <string name="error_unexpected">Errore inaspettato: %1$s</string>
+    <string name="notification_title">Recupero della posizione</string>
+    <string name="notification_text">Attendere prego…</string>
+    <string name="location_service_channel_name">Servizio di localizzazione</string>
+    <string name="location_permission_required">È necessaria ll\'autorizzazione alla posizione. Apri prima l\'app.</string>
+    <string name="no_saved_location">Nessuna posizione salvata. Salva prima la posizione.</string>
+    <string name="menu">Menu</string>
+    <string name="dark_mode">Modalità Scura</string>
+    <string name="save_parking">ParKar</string>
+    <string name="save_parking_location">Salva posizione del parcheggio</string>
+    <string name="edit_parking">Modifica posizione</string>
+    <string name="navigate_to_car">Portami all\'auto</string>
+    <string name="select_manual_location">Seleziona posizione manuale</string>
+    <string name="central_location">Posizione centrale</string>
+    <string name="save_selected_location">Salva posizione selezionata</string>
+    <string name="cancel">Annulla</string>
+    <string name="about">Informazioni</string>
+    <string name="back">Indietro</string>
+    <string name="version">Versione: %1$s</string>
+    <string name="developer_name">Sviluppato da TurboMonguerDev</string>
+    <string name="eula">EULA</string>
+    <string name="privacy_policy">Politica sulla Privacy</string>
+    <string name="terms_and_conditions">Termini e Condizioni</string>
+    <string name="contact_support">Contatta il Supporto</string>
+    <string name="rate_us">Valutaci su Google Play</string>
+    <string name="share_location">Condividi posizione</string>
+
+    <!-- Language -->
+    <string name="language">Lingua</string>
+    <string name="select_language">Seleziona la lingua</string>
+    <string name="system_default">Predefinito di sistema</string>
+    <string name="language_name_en">Inglese</string>
+    <string name="language_name_es">Spagnolo</string>
+    <string name="language_name_fr">Francese</string>
+    <string name="language_name_de">Tedesco</string>
+    <string name="language_name_it">Italiano</string>
+    <string name="language_name_ja">Giapponese</string>
+    <string name="language_name_ru">Russo</string>
+</resources>

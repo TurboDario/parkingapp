@@ -1,8 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base App Theme for Light mode -->
     <style name="Theme.ParKar" parent="Theme.Material3.DayNight.NoActionBar">
-    </style>
-
-    <style name="Theme.ParKar.Light" parent="Theme.ParKar">
         <item name="colorPrimary">@color/light_primary</item>
         <item name="colorPrimaryVariant">@color/light_primary_variant</item>
         <item name="colorOnPrimary">@color/light_on_primary</item>
@@ -13,13 +12,8 @@
         <item name="colorSurface">@color/light_surface</item>
         <item name="colorOnBackground">@color/light_on_background</item>
         <item name="colorOnSurface">@color/light_on_surface</item>
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
-    <style name="Theme.ParKar.Splash" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:windowSplashScreenBackground" tools:ignore="NewApi">#FFBBDEFB</item>
-        <item name="android:windowSplashScreenAnimatedIcon" tools:ignore="NewApi">@drawable/splash_icon</item>
-        <item name="android:windowSplashScreenAnimationDuration" tools:ignore="NewApi">1000</item>
-    </style>
-
 </resources>

@@ -23,7 +23,7 @@ android {
         applicationId = "com.turbomonguerdev.parkar"
         minSdk = 28
         targetSdk = 35
-        versionCode = 1
+        versionCode = 2
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.navigation.runtime.android)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.datastore.core.android)
 
     // Testing
     testImplementation(libs.junit)
@@ -104,4 +105,7 @@ dependencies {
     // Maps
     implementation(libs.play.services.maps)
     implementation(libs.maps.compose)
+
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 }
