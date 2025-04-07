@@ -60,7 +60,8 @@ class LocationManager(private val context: Context) {
     }
 
     private fun openNavigationApp(latitude: Double, longitude: Double) {
-        val gmmIntentUri = Uri.parse("google.navigation:q=$latitude,$longitude")
+        val uriString = "google.navigation:q=$latitude,$longitude&mode=w"
+        val gmmIntentUri = Uri.parse(uriString)
         val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri).apply {
             setPackage("com.google.android.apps.maps")
         }
