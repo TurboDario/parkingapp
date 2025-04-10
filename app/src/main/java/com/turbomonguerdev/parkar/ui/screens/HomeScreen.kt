@@ -1,6 +1,8 @@
 package com.turbomonguerdev.parkar.ui.screens
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -11,10 +13,12 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,7 +41,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.turbomonguerdev.parkar.R
 import com.turbomonguerdev.parkar.ui.components.AppDrawerContent
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -52,7 +61,7 @@ fun HomeScreen(
     supportedLanguages: List<Pair<String, String>>,
     onLanguageChange: (String) -> Unit
 ) {
-    val drawerState = rememberDrawerState(initialValue = androidx.compose.material3.DrawerValue.Closed)
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var showLanguageDialog by remember { mutableStateOf(false) }
     var selectedLanguage by remember { mutableStateOf(currentLanguage) }
@@ -276,11 +285,41 @@ fun NavigateButton(onClick: () -> Unit) {
 
 @Composable
 fun PhotoButton(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val photoFileName = "parking_photo.jpg"
+    val photoFile = File(context.filesDir, photoFileName)
     var photo by remember { mutableStateOf<ImageBitmap?>(null) }
     var showPhotoDialog by remember { mutableStateOf(false) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
-        if (bitmap != null) photo = bitmap.asImageBitmap()
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        if (photoFile.exists()) {
+            val loadedBitmap = withContext(Dispatchers.IO) {
+                BitmapFactory.decodeFile(photoFile.absolutePath)
+            }
+            if (loadedBitmap != null) {
+                photo = loadedBitmap.asImageBitmap()
+            }
+        }
     }
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
+        if (bitmap != null) {
+            scope.launch(Dispatchers.IO) {
+                try {
+                    FileOutputStream(photoFile).use { fos ->
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos)
+                    }
+                    withContext(Dispatchers.Main) {
+                        photo = bitmap.asImageBitmap()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
     Button(
         onClick = {
             if (photo != null) showPhotoDialog = true else launcher.launch(null)
@@ -319,7 +358,7 @@ fun PhotoButton(modifier: Modifier = Modifier) {
                     IconButton(onClick = { launcher.launch(null) }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_camera),
-                            contentDescription = stringResource(R.string.take_photo),
+                            contentDescription = stringResource(R.string.retake_photo),
                             modifier = Modifier.size(28.dp)
                         )
                     }
@@ -336,11 +375,22 @@ fun PhotoButton(modifier: Modifier = Modifier) {
 
 @Composable
 fun PlaceholderButton(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val sharedPrefs = remember { context.getSharedPreferences("parking_info", Context.MODE_PRIVATE) }
     var showPlaceholderDialog by remember { mutableStateOf(false) }
-    var parkingLabel by remember { mutableStateOf("") }
-    var parkingDescription by remember { mutableStateOf("") }
+    var parkingLabelState by remember {
+        mutableStateOf(sharedPrefs.getString("parking_label", "") ?: "")
+    }
+    var parkingDescriptionState by remember {
+        mutableStateOf(sharedPrefs.getString("parking_description", "") ?: "")
+    }
+
     Button(
-        onClick = { showPlaceholderDialog = true },
+        onClick = {
+            parkingLabelState = sharedPrefs.getString("parking_label", "") ?: ""
+            parkingDescriptionState = sharedPrefs.getString("parking_description", "") ?: ""
+            showPlaceholderDialog = true
+        },
         modifier = modifier
             .size(52.dp)
             .shadow(8.dp, shape = MaterialTheme.shapes.large),
@@ -352,12 +402,15 @@ fun PlaceholderButton(modifier: Modifier = Modifier) {
         contentPadding = PaddingValues(0.dp)
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_share_location),
-            contentDescription = stringResource(R.string.close),
+            painter = painterResource(id = R.drawable.ic_parking_label),
+            contentDescription = stringResource(R.string.parking_label),
             modifier = Modifier.size(28.dp)
         )
     }
     if (showPlaceholderDialog) {
+        var currentLabel by remember { mutableStateOf(parkingLabelState) }
+        var currentDescription by remember { mutableStateOf(parkingDescriptionState) }
+
         AlertDialog(
             onDismissRequest = { showPlaceholderDialog = false },
             containerColor = MaterialTheme.colorScheme.surface,
@@ -365,33 +418,47 @@ fun PlaceholderButton(modifier: Modifier = Modifier) {
             text = {
                 Column {
                     OutlinedTextField(
-                        value = parkingLabel,
-                        onValueChange = { parkingLabel = it },
+                        value = currentLabel,
+                        onValueChange = { currentLabel = it },
                         label = { Text(text = stringResource(R.string.parking_label)) },
-                        textStyle = MaterialTheme.typography.headlineLarge,
+                        textStyle = MaterialTheme.typography.headlineMedium,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface
+                        ),
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
-                        value = parkingDescription,
-                        onValueChange = { parkingDescription = it },
+                        value = currentDescription,
+                        onValueChange = { currentDescription = it },
                         label = { Text(text = stringResource(R.string.parking_description)) },
                         textStyle = MaterialTheme.typography.bodyLarge,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface
+                        ),
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
             },
             confirmButton = {
                 TextButton(onClick = {
-                    // Aquí se puede implementar la lógica para guardar los datos ingresados.
+                    sharedPrefs.edit().apply {
+                        putString("parking_label", currentLabel)
+                        putString("parking_description", currentDescription)
+                        apply()
+                    }
+                    parkingLabelState = currentLabel
+                    parkingDescriptionState = currentDescription
                     showPlaceholderDialog = false
                 }) {
-                    Text(text = stringResource(R.string.save))
+                    Text(text = stringResource(R.string.save), style = MaterialTheme.typography.bodyLarge)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showPlaceholderDialog = false }) {
-                    Text(text = stringResource(R.string.cancel))
+                    Text(text = stringResource(R.string.cancel), style = MaterialTheme.typography.bodyLarge)
                 }
             }
         )
