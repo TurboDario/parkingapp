@@ -43,4 +43,15 @@
     <string name="language_name_it">Italian</string>
     <string name="language_name_ja">Japanese</string>
     <string name="language_name_ru">Russian</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="retake_photo">Retake Photo</string>
+    <string name="taken_photo">Taken Photo</string>
+    <string name="ok">ok</string>
+    <string name="photo">Photo</string>
+    <string name="saved_photo">Saved photo</string>
+    <string name="close">Close</string>
+    <string name="save">Save\n</string>
+    <string name="enter_parking_info">Enter parking info</string>
+    <string name="parking_label">Parking Label</string>
+    <string name="parking_description">Parking description</string>
 </resources>
