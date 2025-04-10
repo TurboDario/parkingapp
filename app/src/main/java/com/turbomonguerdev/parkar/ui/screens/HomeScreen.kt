@@ -47,6 +47,11 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 
+const val PHOTO_FILE_NAME = "parking_photo.jpg"
+const val PREFS_NAME = "parking_info"
+const val KEY_PARKING_LABEL = "parking_label"
+const val KEY_PARKING_DESCRIPTION = "parking_description"
+
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -65,6 +70,21 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     var showLanguageDialog by remember { mutableStateOf(false) }
     var selectedLanguage by remember { mutableStateOf(currentLanguage) }
+    val context = LocalContext.current
+    var resetTrigger by remember { mutableStateOf(0) }
+
+    fun clearParkingDetails() {
+        val photoFile = File(context.filesDir, PHOTO_FILE_NAME)
+        if (photoFile.exists()) {
+            photoFile.delete()
+        }
+        val sharedPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        sharedPrefs.edit()
+            .remove(KEY_PARKING_LABEL)
+            .remove(KEY_PARKING_DESCRIPTION)
+            .apply()
+        resetTrigger++ // Increment trigger to force recomposition/reload in children
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -111,7 +131,10 @@ fun HomeScreen(
                 ) {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         ParkingButton(
-                            onClick = onSaveParkingLocation,
+                            onClick = {
+                                clearParkingDetails()
+                                onSaveParkingLocation()
+                            },
                             modifier = Modifier
                                 .align(Alignment.Center)
                                 .fillMaxWidth(0.6f)
@@ -142,7 +165,7 @@ fun HomeScreen(
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            PhotoButton()
+                            PhotoButton(resetTrigger = resetTrigger)
                             PlaceholderButton()
                         }
                     }
@@ -284,22 +307,21 @@ fun NavigateButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun PhotoButton(modifier: Modifier = Modifier) {
+fun PhotoButton(modifier: Modifier = Modifier, resetTrigger: Int) {
     val context = LocalContext.current
-    val photoFileName = "parking_photo.jpg"
-    val photoFile = File(context.filesDir, photoFileName)
+    val photoFile = remember { File(context.filesDir, PHOTO_FILE_NAME) }
     var photo by remember { mutableStateOf<ImageBitmap?>(null) }
     var showPhotoDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(resetTrigger, Unit) {
         if (photoFile.exists()) {
             val loadedBitmap = withContext(Dispatchers.IO) {
                 BitmapFactory.decodeFile(photoFile.absolutePath)
             }
-            if (loadedBitmap != null) {
-                photo = loadedBitmap.asImageBitmap()
-            }
+            photo = loadedBitmap?.asImageBitmap()
+        } else {
+            photo = null
         }
     }
 
@@ -312,6 +334,8 @@ fun PhotoButton(modifier: Modifier = Modifier) {
                     }
                     withContext(Dispatchers.Main) {
                         photo = bitmap.asImageBitmap()
+                        // Optionally close dialog if user was retaking photo from dialog
+                        // showPhotoDialog = false
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -336,10 +360,11 @@ fun PhotoButton(modifier: Modifier = Modifier) {
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_camera),
-            contentDescription = stringResource(R.string.take_photo),
+            contentDescription = stringResource(if (photo == null) R.string.take_photo else R.string.view_photo),
             modifier = Modifier.size(28.dp)
         )
     }
+
     if (showPhotoDialog && photo != null) {
         AlertDialog(
             onDismissRequest = { showPhotoDialog = false },
@@ -376,19 +401,18 @@ fun PhotoButton(modifier: Modifier = Modifier) {
 @Composable
 fun PlaceholderButton(modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val sharedPrefs = remember { context.getSharedPreferences("parking_info", Context.MODE_PRIVATE) }
+    val sharedPrefs = remember { context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE) }
     var showPlaceholderDialog by remember { mutableStateOf(false) }
-    var parkingLabelState by remember {
-        mutableStateOf(sharedPrefs.getString("parking_label", "") ?: "")
-    }
-    var parkingDescriptionState by remember {
-        mutableStateOf(sharedPrefs.getString("parking_description", "") ?: "")
-    }
+
+    // Temporary states for the dialog only
+    var parkingLabelInDialog by remember { mutableStateOf("") }
+    var parkingDescriptionInDialog by remember { mutableStateOf("") }
 
     Button(
         onClick = {
-            parkingLabelState = sharedPrefs.getString("parking_label", "") ?: ""
-            parkingDescriptionState = sharedPrefs.getString("parking_description", "") ?: ""
+            // Load current values from prefs when dialog is about to open
+            parkingLabelInDialog = sharedPrefs.getString(KEY_PARKING_LABEL, "") ?: ""
+            parkingDescriptionInDialog = sharedPrefs.getString(KEY_PARKING_DESCRIPTION, "") ?: ""
             showPlaceholderDialog = true
         },
         modifier = modifier
@@ -407,10 +431,8 @@ fun PlaceholderButton(modifier: Modifier = Modifier) {
             modifier = Modifier.size(28.dp)
         )
     }
-    if (showPlaceholderDialog) {
-        var currentLabel by remember { mutableStateOf(parkingLabelState) }
-        var currentDescription by remember { mutableStateOf(parkingDescriptionState) }
 
+    if (showPlaceholderDialog) {
         AlertDialog(
             onDismissRequest = { showPlaceholderDialog = false },
             containerColor = MaterialTheme.colorScheme.surface,
@@ -418,8 +440,8 @@ fun PlaceholderButton(modifier: Modifier = Modifier) {
             text = {
                 Column {
                     OutlinedTextField(
-                        value = currentLabel,
-                        onValueChange = { currentLabel = it },
+                        value = parkingLabelInDialog,
+                        onValueChange = { parkingLabelInDialog = it },
                         label = { Text(text = stringResource(R.string.parking_label)) },
                         textStyle = MaterialTheme.typography.headlineMedium,
                         colors = OutlinedTextFieldDefaults.colors(
@@ -430,8 +452,8 @@ fun PlaceholderButton(modifier: Modifier = Modifier) {
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
-                        value = currentDescription,
-                        onValueChange = { currentDescription = it },
+                        value = parkingDescriptionInDialog,
+                        onValueChange = { parkingDescriptionInDialog = it },
                         label = { Text(text = stringResource(R.string.parking_description)) },
                         textStyle = MaterialTheme.typography.bodyLarge,
                         colors = OutlinedTextFieldDefaults.colors(
@@ -445,12 +467,10 @@ fun PlaceholderButton(modifier: Modifier = Modifier) {
             confirmButton = {
                 TextButton(onClick = {
                     sharedPrefs.edit().apply {
-                        putString("parking_label", currentLabel)
-                        putString("parking_description", currentDescription)
+                        putString(KEY_PARKING_LABEL, parkingLabelInDialog)
+                        putString(KEY_PARKING_DESCRIPTION, parkingDescriptionInDialog)
                         apply()
                     }
-                    parkingLabelState = currentLabel
-                    parkingDescriptionState = currentDescription
                     showPlaceholderDialog = false
                 }) {
                     Text(text = stringResource(R.string.save), style = MaterialTheme.typography.bodyLarge)

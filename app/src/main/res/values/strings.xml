@@ -54,4 +54,5 @@
     <string name="enter_parking_info">Enter parking info</string>
     <string name="parking_label">Parking Label</string>
     <string name="parking_description">Parking description</string>
+    <string name="view_photo">View photo</string>
 </resources>
